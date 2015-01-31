@@ -53,12 +53,13 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> implements
 		DateFormat dateFormatter = DateFormat.getDateInstance();
 		
 		holder.dateText.setText(dateFormatter.format(expense.getCalendar().getTime()));
-		holder.amountText.setText(expense.getCurrency().getSymbol() + expense.getAmount());
+		holder.amountText.setText(expense.getReadableAmount());
 
 
 		
 	    return convertView;	
-	  	}
+	  
+	}
 
 	
 }

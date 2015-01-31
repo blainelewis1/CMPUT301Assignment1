@@ -15,8 +15,6 @@ public class Claim {
 	 *  textual description (e.g., destination and reason for travel)
 	 * 
 	*/
-
-	//TODO: verify that all of my validation is good what not
 	
 	enum Status {IN_PROGRESS, SUBMITTED, RETURNED, APPROVED};
 		
@@ -77,7 +75,6 @@ public class Claim {
 		if(!this.isEditable()){
 			throw new IllegalArgumentException("Claim is not in an editable state.");
 		}
-		//TODO: add validation in again..
 		
 		if(endCalendar != null && startCalendar.compareTo(this.endCalendar) > 0){
 			throw new IllegalArgumentException("Start calendar must be before end calendar.");
@@ -98,7 +95,6 @@ public class Claim {
 		if(!this.isEditable()){
 			throw new IllegalStateException("Claim is not in an editable state.");
 		}
-		//TODO: add validation in again..
 		
 		 if(startCalendar != null && endCalendar.compareTo(this.startCalendar) < 0){
 		 
@@ -221,6 +217,11 @@ public class Claim {
 		//sb.append("</table>");
 		
 		return sb.toString();
+	}
+
+	public boolean isDateRangeValid(Calendar startDate,
+			Calendar endDate) {
+		return startCalendar.compareTo(endCalendar) <= 0 && endDate.compareTo(startDate) >= 0;
 	}
 
 }

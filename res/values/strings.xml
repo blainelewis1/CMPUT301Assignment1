@@ -20,5 +20,6 @@
     <string name="new_expense">New Expense</string>
     <string name="edit">Edit</string>
     <string name="email">Email</string>
+    <string name="delete">Delete</string>
 
 </resources>

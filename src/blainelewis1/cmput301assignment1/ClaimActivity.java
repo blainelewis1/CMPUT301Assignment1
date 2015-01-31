@@ -20,8 +20,6 @@ import android.widget.Toast;
 import blainelewis1.cmput301assignment1.Claim.Status;
 
 public class ClaimActivity extends SerializingActivity {
-
-	//TODO: should edit claim activity extend claim activity
 	
 	private Claim claim;
 	

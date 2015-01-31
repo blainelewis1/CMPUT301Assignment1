@@ -1,43 +1,43 @@
 package blainelewis1.cmput301assignment1;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Toast;
 
-public class EditClaimActivity extends SerializingActivity {
-
-	//TODO: what happens in a list item if it has a large description
-	//TODO: if we change the date range, what do we do with expenses no longer in  the range
-	//TODO: We could extract a controller from this
-	
-	
-	private Claim claim;
-	
-	
-	private EditText descriptionTextView;
-	private EditText startDate;
-	private EditText endDate;
-	
-	private DatePickerDialog startDatePickerDialog;
-	private DatePickerDialog endDatePickerDialog;
-	
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+public class EditClaimActivity extends SerializingActivity {		
 		
-		setContentView(R.layout.activity_edit_claim);
+		private Claim claim;
 		
-		loadClaim(savedInstanceState);	
+		
+		private EditText descriptionEditText;
+		private EditText startDate;
+		private EditText endDate;
+		
+		private DatePickerDialog startDatePickerDialog;
+		private DatePickerDialog endDatePickerDialog;
+
+
+		private Button finishButton;
+		
+	
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			
+			setContentView(R.layout.activity_edit_claim);
+		
+		claim = ClaimManager.getInstance().extractClaim(savedInstanceState, getIntent());
 
 		findViewsByIds();
 		initViews();
@@ -58,13 +58,10 @@ public class EditClaimActivity extends SerializingActivity {
 
 	private void setListeners() {
 		
-		descriptionTextView.setOnFocusChangeListener(new OnFocusChangeListener() {
+		descriptionEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				if(!hasFocus) {
-					claim.setDescription(descriptionTextView.getText().toString());
-				}
-				
+				validate();				
 			}
 		});
 				
@@ -80,9 +77,11 @@ public class EditClaimActivity extends SerializingActivity {
 				calendar.set(Calendar.MONTH, monthOfYear);
 				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 				
-				startDate.clearFocus();
-				//TODO: Validate, make sure that we still have the thingers i actually don't knwo what this means...
 				
+				//TODO: also hacky
+				startDate.clearFocus();
+				
+				validate();
 								
 			}
 			
@@ -99,6 +98,7 @@ public class EditClaimActivity extends SerializingActivity {
 				calendar.set(Calendar.MONTH, monthOfYear);
 				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
+				//TODO: also hacky
 				endDate.clearFocus();
 				
 				
@@ -111,6 +111,11 @@ public class EditClaimActivity extends SerializingActivity {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(hasFocus) {
+					
+					Calendar calendar = extractDateFromEditText(startDate);
+					
+					
+					startDatePickerDialog.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 					startDatePickerDialog.show();
 				}
 				
@@ -122,6 +127,10 @@ public class EditClaimActivity extends SerializingActivity {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(hasFocus) {
+					
+					Calendar calendar = extractDateFromEditText(endDate);
+					
+					endDatePickerDialog.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 					endDatePickerDialog.show();
 				}
 				
@@ -131,38 +140,13 @@ public class EditClaimActivity extends SerializingActivity {
 		
 	}
 
-	private void loadClaim(Bundle savedInstanceState) {
-		
-		//Attempt to load the claim from intent or savedInstanceState
-				
-		ClaimManager claimManager = ClaimManager.getInstance();
-		
-		claim = claimManager.extractClaim(savedInstanceState, getIntent());
-		
-		//TODO: maybe we can extract this to the claimManager
-		
-		if(savedInstanceState == null) {
-		
-			//Try to get claim from intent
-			Intent intent = getIntent();
-			claim = claimManager.getClaimById(intent.getStringExtra("CLAIM_ID"));
-			
-		} else {
-			claim = claimManager.getClaimById(savedInstanceState.getString("CLAIM_ID"));
-		}
-		
-		if(claim == null) {
-			//TODO: an error occurred, fail gracefully also add this in for the expenses and other thingermajgers
-			finish();
-		}
-		
-	}
+
 
 	private void findViewsByIds() {
-		descriptionTextView = (EditText) findViewById(R.id.edit_claim_description);
+		descriptionEditText = (EditText) findViewById(R.id.edit_claim_description);
 		startDate = (EditText) findViewById(R.id.edit_claim_start_date);
 		endDate = (EditText) findViewById(R.id.edit_claim_end_date);
-		//expensesListView = (ListView) findViewById(R.id.edit_claim_expense_list);
+		finishButton = (Button) findViewById(R.id.action_finish_edit_claim);
 	}
 
 	@Override
@@ -186,23 +170,52 @@ public class EditClaimActivity extends SerializingActivity {
 		return super.onOptionsItemSelected(item);
 	}	
 
-	private void submitEdits() {
-		//TODO: only submit edits if the current form is valid
+	private void submitEdits() {	
 		
 		if(validate()) {
-			//TODO: submit edits to claims
 			
+			claim.setDescription(descriptionEditText.getText().toString());
+			claim.setEndCalendar(extractDateFromEditText(endDate));
+			claim.setStartCalendar(extractDateFromEditText(startDate));
 			
-		} else {
-			Toast toast = Toast.makeText(this, "Make sure all fields contain valid input!", Toast.LENGTH_SHORT);
-			toast.show();
-		}
+		}		
+	}
+
+	private Calendar extractDateFromEditText(EditText editText) {
+		DateFormat formatter = DateFormat.getInstance();
+		Date date = null;
+		try {
+			date = formatter.parse(editText.getText().toString());
+		} catch (ParseException e) {}
 		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(date);
+		
+		return calendar;
 	}
 
 	private boolean validate() {
-		// TODO: Finish me!!!!
-		return false;
+		boolean valid = true;
+		
+		if(descriptionEditText.getText().toString().isEmpty()) {
+			descriptionEditText.setError("Description cannot be empty!");
+			valid = false;
+		}
+
+		if(claim.isDateRangeValid(extractDateFromEditText(startDate), extractDateFromEditText(endDate))) {
+			
+		}
+				
+		if(!valid) {
+			finishButton.setVisibility(View.GONE);
+		} else {
+			finishButton.setVisibility(View.VISIBLE);	
+		}
+		
+		invalidateOptionsMenu();
+		
+		return valid;
 	}
 
 }

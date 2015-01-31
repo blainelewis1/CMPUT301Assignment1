@@ -110,7 +110,7 @@ public class ClaimManager {
 			writer.close();
 			
 		} catch (IOException e) {
-			//TODO: what to do in error case
+			//Fail silently, we can't do anything about this...
 			Log.e("Error", "Serialize failed", e);
 		}
 		
@@ -135,7 +135,7 @@ public class ClaimManager {
 			reader.close();
 			
 		} catch (IOException e) {
-			//TODO: exception what to do
+			//fail silently there's nothing else we can do 
 			Log.e("Error", "Deserialize failed", e);		
 		}
 		

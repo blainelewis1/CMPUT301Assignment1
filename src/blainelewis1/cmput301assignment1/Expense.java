@@ -1,5 +1,4 @@
 package blainelewis1.cmput301assignment1;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -10,13 +9,8 @@ import java.util.Set;
 import java.util.UUID;
 
 
-public class Expense implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	//TODO: extract "Unique" superclass
+public class Expense {
+
 	/*
 	 * 
 	 * An expense item has a:
@@ -53,7 +47,6 @@ public class Expense implements Serializable {
 	
 	
 
-	//TODO: an expense should always be in a safe state
 	
 	public Expense  (Calendar calendar, String category, String description, int amount, Currency currency) {
 		id = UUID.randomUUID().toString();
@@ -67,7 +60,7 @@ public class Expense implements Serializable {
 	}
 
 	public Expense(Claim claim) {
-		this(claim.getStartCalendar(), "meal", "New Expense", 1, Currency.getInstance(Locale.getDefault()));
+		this(claim.getStartCalendar(), "meal", "", 1, Currency.getInstance(Locale.getDefault()));
 	}
 
 	public Calendar getCalendar() {
@@ -123,7 +116,6 @@ public class Expense implements Serializable {
 	}
 
 	public Currency getCurrency() {
-		//TODO: replace all occurrences of getCurrency that actually want to represent the currency
 		return currency;
 	}
 
@@ -148,16 +140,13 @@ public class Expense implements Serializable {
 		
 		DateFormat formatter = DateFormat.getDateInstance();
 
-		//TODO: is this everything
+		//TODO: make this prettier
 		
 		sb.append("<div class=\"expense\">")
-		.append("<p class=\"description\">").append(description).append("</p>")
+		.append("<h2 class=\"description\">").append(description).append("</h2>")
 		.append("<p class=\"date\">").append(formatter.format(calendar.getTime())).append("</p>")
 		.append("<p class=\"category\">").append(category).append("</p>")
-		.append("<p class=\"amount\">")
-		.append("<span class=\"currency\">").append(getCurrency().getCurrencyCode()).append("</span>")
-		.append("<span class=\"value\">").append(amount).append("</span>")
-		.append("<p style=\"display:none;\">").append(id).append("</p>")
+		.append("<p class=\"amount\">").append(getReadableAmount()).append("</p>")
 		.append("</div>");
 	
 		return sb.toString();

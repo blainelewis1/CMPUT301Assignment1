@@ -11,8 +11,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class ListClaimsActivity extends SerializingActivity {
-
-	//TODO: what to do if a claim has empty fields
 	
 	private ListView claimsListView;
 	private ClaimAdapter claimsListAdapter;

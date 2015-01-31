@@ -1,8 +1,10 @@
 package blainelewis1.cmput301assignment1;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Currency;
+import java.util.Date;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -12,15 +14,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 public class ExpenseActivity extends SerializingActivity {
-
-	//TODO: Back should throw away changes.. checkmark should finish. 
-	//This means we should only apply changes when finish is clicked
 	
+	//TODO: where should expenses be deleted from
 	
 	private Expense expense;
 	
@@ -35,6 +36,8 @@ public class ExpenseActivity extends SerializingActivity {
 	private ArrayAdapter<String> categoryAdapter;
 	private ArrayAdapter<Currency> currencyAdapter;
 
+	private Button finishButton;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -45,125 +48,75 @@ public class ExpenseActivity extends SerializingActivity {
 		findViewsByIds();
 		initViews();
 		setListeners();
-		update();
 		
 	}
 
 	private void setListeners() {
-		//TODO: these shouldn't apply to the thinger
-		/*
-		categorySpinner.setOnFocusChangeListener(new OnFocusChangeListener() {
+				
+		OnFocusChangeListener validatingFocusChange = new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				if(!hasFocus) {
-					expense.setCategory((String) categorySpinner.getSelectedItem());
-					update();
-					//TODO: there's a bug if you click submit to quickly without focus change.......
-				}
+				validate();
 			}
-		});
+
+		};
 		
-		currencySpinner.setOnFocusChangeListener(new OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if(!hasFocus) {
-					expense.setCurrency((Currency) currencySpinner.getSelectedItem());
-					update();
-				}
-				
-			}
-		});
-		
-		*/
-		
-		//TODO: this validation should be moved.
-		/*
-		descriptionEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if(!hasFocus) {
-					
-					try {
-						expense.setDescription(descriptionEditText.getText().toString());
-					} catch (IllegalArgumentException e) {
-						
-						descriptionEditText.setError(e.getMessage());
-						Toast toast = Toast.makeText(ExpenseActivity.this, e.getMessage(), Toast.LENGTH_SHORT);		
-						toast.show();
-				
-					}
-				} //TODO: what to do about new expenses being labelled new expense
-			}
-		});
-		
-		amountEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if(!hasFocus) {
-					
-					try {
-						expense.setAmount(Double.parseDouble(amountEditText.getText().toString()));
-						
-					} catch (IllegalArgumentException e) {
-						
-						amountEditText.setError(e.getMessage());
-						Toast toast = Toast.makeText(ExpenseActivity.this, e.getMessage(), Toast.LENGTH_SHORT);		
-						toast.show();
-				
-					}
-				}
-				
-			}
-		});
-		*/
-		Calendar expenseCalendar = expense.getCalendar();
-		
+		descriptionEditText.setOnFocusChangeListener(validatingFocusChange);
+		amountEditText.setOnFocusChangeListener(validatingFocusChange);
+
+		Calendar calendar = expense.getCalendar();
 		
 		datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int year, int monthOfYear,
 					int dayOfMonth) {
 				
-				
-				
-				Calendar calendar = expense.getCalendar();
+				Calendar calendar = Calendar.getInstance();
 				calendar.set(Calendar.YEAR, year);
 				calendar.set(Calendar.MONTH, monthOfYear);
 				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 				
 				
-				//we should
-				/*
-				try {
-					 
-				} catch (IllegalArgumentException e) {
-					Toast toast = Toast.makeText(ExpenseActivity.this, e.getMessage(), Toast.LENGTH_SHORT);		
-					toast.show();
-				}
-
-				 */
+				DateFormat formatter = DateFormat.getInstance();
+				dateEditText.setText(formatter.format(calendar.getTime()));
 				
 				//TODO: this is extremely hacky forces focus where it doesn't need to be, we should focus the next item
-				dateEditText.clearFocus();
-				
-				/*update();*/
-				
-				
+				dateEditText.clearFocus();				
 			}
 			
-		}, expenseCalendar.get(Calendar.YEAR), expenseCalendar.get(Calendar.MONTH), expenseCalendar.get(Calendar.DAY_OF_MONTH));
+		}, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 		
 		dateEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
-
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(hasFocus) {
+					
+				
+					Calendar calendar = extractDate();
+					
+					
+					datePickerDialog.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 					datePickerDialog.show();
 				}
 				
 			}
 			
 		});		
+	}
+	
+	private Calendar extractDate() {
+		
+		DateFormat formatter = DateFormat.getInstance();
+		Date date = null;
+		try {
+			date = formatter.parse(dateEditText.getText().toString());
+		} catch (ParseException e) {}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(date);
+		
+		return calendar;
 	}
 
 	private void initViews() {
@@ -172,7 +125,7 @@ public class ExpenseActivity extends SerializingActivity {
 		currencyAdapter = new ArrayAdapter<Currency>(this, 
 												android.R.layout.simple_spinner_item, 
 												currencies);
-		currencySpinner.setAdapter(currencyAdapter);	
+		currencySpinner.setAdapter(currencyAdapter);
 		
 		categoryAdapter = new ArrayAdapter<String>(this,
 													android.R.layout.simple_spinner_item,
@@ -204,36 +157,15 @@ public class ExpenseActivity extends SerializingActivity {
 		descriptionEditText = (EditText) findViewById(R.id.edit_expense_description);
 		amountEditText = (EditText) findViewById(R.id.edit_expense_amount);
 		categorySpinner = (Spinner) findViewById(R.id.edit_expense_category);
-		
-	}
+		finishButton = (Button) findViewById(R.id.action_finish_edit_expense);
 	
-	private void update() {
-		
-		if(expense.getDescription().isEmpty()){
-			setTitle("New Expense");
-		} else {
-			setTitle(expense.getDescription());
-		}
-		
-		currencySpinner.setSelection(currencyAdapter.getPosition(expense.getCurrency()));
-				
-		
-		DateFormat formatter = DateFormat.getDateInstance();
-		
-		categorySpinner.setSelection(categoryAdapter.getPosition(expense.getCategory()));
-		
-		dateEditText.setText(formatter.format(expense.getCalendar().getTime()));		
-		descriptionEditText.setText(expense.getDescription());
-		
-		
-		
-		amountEditText.setText(String.valueOf(expense.getAmount()));	
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.expense, menu);
+		
 		return true;
 	}
 
@@ -247,14 +179,66 @@ public class ExpenseActivity extends SerializingActivity {
 			return true;
 		} else if (id == R.id.action_delete_expense) {
 			deleteExpense();
+		} else if(id == R.id.action_finish_edit_expense) {
+			submitExpense();
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
-	public void submitExpense(View view) {			
-		finish();
+	public void submitExpense() {		
+		
+		if(validate()) {
+
+			
+			expense.setAmount(Integer.parseInt(amountEditText.getText().toString()));
+			expense.setDescription(descriptionEditText.getText().toString());
+			expense.setCalendar(extractDate());			
+			expense.setCategory((String) categorySpinner.getSelectedItem());
+			expense.setCurrency((Currency) currencySpinner.getSelectedItem());
+			
+			
+			finish();
+		}
+		
 	}
 	
+	private boolean validate() {
+		boolean valid = true;
+		
+		
+		//TODO: this is easier to tell after forum reply
+		if(Integer.parseInt(amountEditText.getText().toString()) <= 0) {
+			amountEditText.setError("Amount");
+			valid = false;
+		} 
+
+		if(descriptionEditText.getText().toString().isEmpty()){
+			
+			//TODO: this isn't entirely true....
+			//Make this a little bit more applicable
+			
+			setTitle("New Expense");
+
+			descriptionEditText.setError("Description cannot be empty!");
+			
+			valid = false;
+			
+		} else {
+			setTitle(descriptionEditText.toString());
+		}
+		
+		
+		if(!valid) {
+			finishButton.setVisibility(View.GONE);
+		} else {
+			finishButton.setVisibility(View.VISIBLE);	
+		}
+		
+		invalidateOptionsMenu();
+		
+		return valid;
+	}
+
 	public void deleteExpense() {
 		claim.deleteExpense(expense);
 		
