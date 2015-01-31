@@ -1,5 +1,6 @@
 package blainelewis1.cmput301assignment1;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,7 +11,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class ListClaimsActivity extends SerializingActivity {
+public class ListClaimsActivity extends Activity {
 	
 	//TODO: claims and expenses with long descriptions look ugly, make them wrap or end in ellipse or something
 	
@@ -21,6 +22,8 @@ public class ListClaimsActivity extends SerializingActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_claims);
+		
+		ClaimManager.getInstance().deserialize(this);
 		
 		findViewsByIds();
 		initViews();

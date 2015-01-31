@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Currency;
 import java.util.Date;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,9 +18,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class ExpenseActivity extends SerializingActivity {
+public class ExpenseActivity extends Activity {
 	
 	//TODO: what if back on a new claim, maybe pass flag in intent, because it needs to be deleted
+	//TODO: clicking back is going back for some reason....
 	
 	private Expense expense;
 	
@@ -141,6 +143,8 @@ public class ExpenseActivity extends SerializingActivity {
 		
 		dateEditText.setText(formatter.format(expense.getCalendar().getTime()));
 		
+		amountEditText.setText(String.valueOf(expense.getAmount()));
+		
 	}
 	
 	private void findViewsByIds() {
@@ -191,6 +195,7 @@ public class ExpenseActivity extends SerializingActivity {
 			expense.setCategory((String) categorySpinner.getSelectedItem());
 			expense.setCurrency((Currency) currencySpinner.getSelectedItem());
 			
+			ClaimManager.getInstance().serialize(this);
 			
 			finish();
 		}
@@ -200,11 +205,6 @@ public class ExpenseActivity extends SerializingActivity {
 	private boolean validate() {
 		valid = true;
 		
-		//TODO: this is easier to tell after forum reply
-		if(Integer.parseInt(amountEditText.getText().toString()) <= 0) {
-			amountEditText.setError("Amount");
-			valid = false;
-		} 
 
 		if(descriptionEditText.getText().toString().isEmpty()){
 			
@@ -228,6 +228,8 @@ public class ExpenseActivity extends SerializingActivity {
 
 	public void deleteExpense() {
 		claim.deleteExpense(expense);
+		
+		ClaimManager.getInstance().serialize(this);
 		
 		finish();
 	}

@@ -21,5 +21,7 @@
     <string name="edit">Edit</string>
     <string name="email">Email</string>
     <string name="delete">Delete</string>
+    <string name="date">Date</string>
+    <string name="amount">Amount</string>
 
 </resources>

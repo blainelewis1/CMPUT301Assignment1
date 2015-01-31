@@ -221,7 +221,7 @@ public class Claim {
 
 	public boolean isDateRangeValid(Calendar startDate,
 			Calendar endDate) {
-		return startCalendar.compareTo(endCalendar) <= 0 && endDate.compareTo(startDate) >= 0;
+		return startDate.compareTo(endDate) <= 0 && endDate.compareTo(startDate) >= 0;
 	}
 
 }

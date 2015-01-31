@@ -5,17 +5,22 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class EditClaimActivity extends SerializingActivity {		
+//TODO: validate is being called too often
+
+public class EditClaimActivity extends Activity {		
 		
 		private Claim claim;
 		
@@ -28,7 +33,10 @@ public class EditClaimActivity extends SerializingActivity {
 		private DatePickerDialog endDatePickerDialog;
 
 
-		private boolean valid;		
+		private boolean valid;
+
+
+		private LinearLayout layout;		
 	
 		@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +81,9 @@ public class EditClaimActivity extends SerializingActivity {
 				
 				startDate.setText(formatDate(year, monthOfYear, dayOfMonth));
 				
-				//TODO: also hacky
+				//TODO: less hacky but it really doesn't work...
 				startDate.clearFocus();
+				layout.requestFocus();
 				
 				validate();
 								
@@ -91,8 +100,8 @@ public class EditClaimActivity extends SerializingActivity {
 				
 				endDate.setText(formatDate(year, monthOfYear, dayOfMonth));
 
-				//TODO: also hacky
-				endDate.clearFocus();
+				startDate.clearFocus();
+				layout.requestFocus();				
 				validate();
 				
 			}
@@ -149,6 +158,7 @@ public class EditClaimActivity extends SerializingActivity {
 		descriptionEditText = (EditText) findViewById(R.id.edit_claim_description);
 		startDate = (EditText) findViewById(R.id.edit_claim_start_date);
 		endDate = (EditText) findViewById(R.id.edit_claim_end_date);
+		layout = (LinearLayout) findViewById(R.id.edit_claim_layout);
 	}
 
 	@Override
@@ -184,10 +194,12 @@ public class EditClaimActivity extends SerializingActivity {
 			claim.setEndCalendar(extractDateFromEditText(endDate));
 			claim.setStartCalendar(extractDateFromEditText(startDate));
 			
+			ClaimManager.getInstance().serialize(this);
 						
 			finish();
 			
 		} else {
+			//TODO: remove me
 			Toast toast = Toast.makeText(this, "yoooo", Toast.LENGTH_SHORT);
 			toast.show();
 		}
@@ -212,13 +224,19 @@ public class EditClaimActivity extends SerializingActivity {
 		
 		if(descriptionEditText.getText().toString().isEmpty()) {
 			descriptionEditText.setError("Description cannot be empty!");
+			Log.e("uhhh", "description!!!!");
+
 			valid = false;
 		}
 
-		if(claim.isDateRangeValid(extractDateFromEditText(startDate), extractDateFromEditText(endDate))) {
+		if(!claim.isDateRangeValid(extractDateFromEditText(startDate), extractDateFromEditText(endDate))) {
 			//TODO: set error text etc.
-			
+			Log.e("uhhh", "claim range....!!!!");
+
 			valid = false;
+		}
+		
+		if(valid == false) {
 		}
 		
 		invalidateOptionsMenu();

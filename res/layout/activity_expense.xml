@@ -1,11 +1,6 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ScrollView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:onClick="saveExpense" >
-
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+    	xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/LinearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Description"
+            android:hint="@string/description"
             android:inputType="textMultiLine" >
                     <requestFocus />
 		</EditText>
@@ -32,11 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Date"
+            android:hint="@string/date"
             android:inputType="date" >
         </EditText>
-
-       
 
         <Spinner
             android:id="@+id/edit_expense_category"
@@ -48,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Amount"
+            android:hint="@string/amount"
             android:inputType="numberDecimal" />
 
         <Spinner
@@ -56,14 +49,5 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/edit_expense_save"
-            android:layout_width="284dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="76dp"
-            android:onClick="submitExpense"
-            android:text="Save" />
 
     </LinearLayout>
-
-</ScrollView>

@@ -3,6 +3,7 @@ package blainelewis1.cmput301assignment1;
 import java.text.DateFormat;
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import blainelewis1.cmput301assignment1.Claim.Status;
 
-public class ClaimActivity extends SerializingActivity {
+public class ClaimActivity extends Activity {
 	
 	private Claim claim;
 	
@@ -86,12 +87,9 @@ public class ClaimActivity extends SerializingActivity {
 	}
 	
 	private void update() {
+		//TODO: remove me...
 		
-		if(claim.getDescription().isEmpty()){
-			setTitle("New Claim");
-		} else {
-			setTitle(claim.getDescription());
-		}
+		setTitle(claim.getDescription());
 		
 		descriptionTextView.setText(claim.getDescription());
 		
@@ -165,6 +163,8 @@ public class ClaimActivity extends SerializingActivity {
 	private void deleteClaim() {
 		ClaimManager claimManager = ClaimManager.getInstance();
 		claimManager.deleteClaim(claim);
+		claimManager.serialize(this);
+		
 		finish();
 	}
 	
@@ -215,17 +215,24 @@ public class ClaimActivity extends SerializingActivity {
 	public void setClaimApproved(View view) {
 		claim.setStatus(Status.APPROVED);
 
+		ClaimManager.getInstance().serialize(this);
+		
 		update();
 	}	
 	
 	public void setClaimReturned(View view) {
 		claim.setStatus(Status.RETURNED);
 
+		ClaimManager.getInstance().serialize(this);
+
+		
 		update();
 	}	
 	
 	public void setClaimSubmitted(View view) {
 		claim.setStatus(Status.SUBMITTED);
+		
+		ClaimManager.getInstance().serialize(this);
 
 		update();		
 	}

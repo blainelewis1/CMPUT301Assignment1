@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="blainelewis1.cmput301assignment1.EditClaimActivity" >
 
+    
    <item
         android:id="@+id/action_finish_edit_claim"
         android:orderInCategory="100"
