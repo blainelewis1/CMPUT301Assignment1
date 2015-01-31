@@ -12,16 +12,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 public class ExpenseActivity extends SerializingActivity {
 
-	//TODO: make categories finite
-
+	//TODO: Back should throw away changes.. checkmark should finish. 
+	//This means we should only apply changes when finish is clicked
+	
+	
 	private Expense expense;
 	
 	private Claim claim;
@@ -38,7 +38,6 @@ public class ExpenseActivity extends SerializingActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
-		//TODO: remove limit date between claim range
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_expense);
 		
@@ -51,8 +50,8 @@ public class ExpenseActivity extends SerializingActivity {
 	}
 
 	private void setListeners() {
-		//TODO: validate data
-		
+		//TODO: these shouldn't apply to the thinger
+		/*
 		categorySpinner.setOnFocusChangeListener(new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
@@ -75,7 +74,10 @@ public class ExpenseActivity extends SerializingActivity {
 			}
 		});
 		
+		*/
 		
+		//TODO: this validation should be moved.
+		/*
 		descriptionEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
@@ -113,21 +115,25 @@ public class ExpenseActivity extends SerializingActivity {
 				
 			}
 		});
-		
-		//TODO: don't limit date ranges
+		*/
 		Calendar expenseCalendar = expense.getCalendar();
+		
 		
 		datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int year, int monthOfYear,
 					int dayOfMonth) {
 				
-				//TODO: Proper access to getCalendar should just setcalendar...				
+				
+				
 				Calendar calendar = expense.getCalendar();
 				calendar.set(Calendar.YEAR, year);
 				calendar.set(Calendar.MONTH, monthOfYear);
 				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 				
+				
+				//we should
+				/*
 				try {
 					 
 				} catch (IllegalArgumentException e) {
@@ -135,8 +141,12 @@ public class ExpenseActivity extends SerializingActivity {
 					toast.show();
 				}
 
+				 */
+				
+				//TODO: this is extremely hacky forces focus where it doesn't need to be, we should focus the next item
 				dateEditText.clearFocus();
-				update();
+				
+				/*update();*/
 				
 				
 			}

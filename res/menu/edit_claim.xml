@@ -3,11 +3,11 @@
     tools:context="blainelewis1.cmput301assignment1.EditClaimActivity" >
 
    <item
-        android:id="@+id/action_delete_claim"
+        android:id="@+id/action_finish_edit_claim"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_discard"
-        android:title="Delete"/>
+        android:icon="@drawable/ic_action_accept"
+        android:title="@string/accept"/>
     
     <item
         android:id="@+id/action_settings"

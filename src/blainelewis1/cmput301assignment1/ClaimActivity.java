@@ -60,7 +60,7 @@ public class ClaimActivity extends SerializingActivity {
 		            Intent intent = new Intent(ClaimActivity.this, ExpenseActivity.class);
 		            
 		        	Expense expense = (Expense) parent.getItemAtPosition(position);
-		            intent.putExtra("CLAIM_ID", ClaimActivity.this.claim.getID());
+		            intent.putExtra("CLAIM_ID", ClaimActivity.this.claim.getId());
 		            intent.putExtra("EXPENSE_ID", expense.getId());
 		            
 		            startActivity(intent);
@@ -76,6 +76,13 @@ public class ClaimActivity extends SerializingActivity {
 		expensesAdapter = new ExpenseAdapter(this, R.layout.expenses_layout, claim.getExpenses());
 		
 		expensesList.setAdapter(expensesAdapter);
+		
+		
+		
+		if(expensesAdapter.isEmpty()) {
+			Toast toast = Toast.makeText(this, "Click + to add an expense to this claim!", Toast.LENGTH_LONG);
+			toast.show();
+		}
 
 	}
 
@@ -240,24 +247,17 @@ public class ClaimActivity extends SerializingActivity {
 	
 	private void editClaim() {		
 		//Pass the intent		
-		Intent intent = new Intent(this, EditClaimActivity.class);
+		Intent intent = ClaimManager.getInstance().getEditClaimIntent(this, claim);
 		
-		intent.putExtra("CLAIM_ID", claim.getID());
+		intent.putExtra("CLAIM_ID", claim.getId());
 		
     	startActivity(intent);	 
 	}
 	
 	public void createExpense() {
-
-		ClaimManager claimManager = ClaimManager.getInstance();
-		Expense expense = claimManager.createNewExpense(claim);
 		
-		Intent createExpenseIntent = new Intent(this, ExpenseActivity.class);
-		
-		createExpenseIntent.putExtra("EXPENSE_ID", expense.getId());
-		createExpenseIntent.putExtra("CLAIM_ID", claim.getID());
-		
-		startActivity(createExpenseIntent);		
+		Intent createExpenseIntent = ClaimManager.getInstance().getCreateExpenseIntent(this, claim);
+		startActivity(createExpenseIntent);
 	}
 
 }

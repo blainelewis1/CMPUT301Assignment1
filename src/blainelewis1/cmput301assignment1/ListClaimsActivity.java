@@ -6,12 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class ListClaimsActivity extends SerializingActivity {
 
-	//TODO: add an empty message to all the list views
 	//TODO: what to do if a claim has empty fields
 	
 	private ListView claimsListView;
@@ -25,7 +25,6 @@ public class ListClaimsActivity extends SerializingActivity {
 		findViewsByIds();
 		initViews();
 		setListeners();
-	
 	}
 
 
@@ -36,8 +35,8 @@ public class ListClaimsActivity extends SerializingActivity {
                     long id) {
             	
             	Claim claim = (Claim) parent.getItemAtPosition(position);
-                Intent intent = new Intent(ListClaimsActivity.this, ClaimActivity.class);
-                intent.putExtra("CLAIM_ID", claim.getID());
+                Intent intent = ClaimManager.getInstance().getEditClaimIntent(ListClaimsActivity.this, claim);
+
                 startActivity(intent);
             }
 		});		
@@ -48,15 +47,17 @@ public class ListClaimsActivity extends SerializingActivity {
 		ClaimManager claimManager = ClaimManager.getInstance();
 		claimsListAdapter = new ClaimAdapter(this, R.layout.claim_layout, claimManager.getClaimsSortedByStartDate());
 		claimsListView.setAdapter(claimsListAdapter);
+		
+		if(claimsListAdapter.isEmpty()) {
+			Toast toast = Toast.makeText(this, "Click + to add a claim!", Toast.LENGTH_LONG);
+			toast.show();
+		}
+	
 	}
 
 
 	private void findViewsByIds() {
 		claimsListView = (ListView)findViewById(R.id.claimsList);
-	}
-
-	private void update() {
-		claimsListAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -77,13 +78,8 @@ public class ListClaimsActivity extends SerializingActivity {
 			return true;
 		} else if (id == R.id.action_new_claim) {
 			
-			Intent createClaimIntent = new Intent(this, EditClaimActivity.class);
-			ClaimManager claimManager = ClaimManager.getInstance();
-					
-			Claim claim = claimManager.createNewClaim(); 
-			
-			createClaimIntent.putExtra("CLAIM_ID", claim.getID());
-	    	startActivity(createClaimIntent);	 
+			Intent intent = ClaimManager.getInstance().getCreateClaimIntent(this);
+			startActivity(intent);	 
 	    	
 		}
 		return super.onOptionsItemSelected(item);
@@ -93,6 +89,6 @@ public class ListClaimsActivity extends SerializingActivity {
 	public void onResume() {
 		super.onResume();
 		
-		update();
+		claimsListAdapter.notifyDataSetChanged();
 	}
 }

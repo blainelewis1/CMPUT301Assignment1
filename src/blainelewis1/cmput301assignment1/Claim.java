@@ -83,7 +83,6 @@ public class Claim {
 			throw new IllegalArgumentException("Start calendar must be before end calendar.");
 		}
 		
-		
 		this.startCalendar = startCalendar;
 	}
 
@@ -152,7 +151,7 @@ public class Claim {
 		
 	}
 
-	public String getID() {
+	public String getId() {
 		return this.id;
 	}
 

@@ -1,6 +1,5 @@
 package blainelewis1.cmput301assignment1;
 
-import java.text.DateFormat;
 import java.util.Calendar;
 
 import android.app.DatePickerDialog;
@@ -12,29 +11,24 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class EditClaimActivity extends SerializingActivity {
 
-	//TODO: should a claim be deletable from this page
-	//TODO:what happens in a list item if it has a large description
+	//TODO: what happens in a list item if it has a large description
 	//TODO: if we change the date range, what do we do with expenses no longer in  the range
+	//TODO: We could extract a controller from this
+	
 	
 	private Claim claim;
 	
 	
 	private EditText descriptionTextView;
-	//private ListView expensesListView;
 	private EditText startDate;
 	private EditText endDate;
-
-
+	
 	private DatePickerDialog startDatePickerDialog;
-
-
 	private DatePickerDialog endDatePickerDialog;
-
-
-	//private ExpenseAdapter expensesAdapter;
 	
 
 	@Override
@@ -48,21 +42,18 @@ public class EditClaimActivity extends SerializingActivity {
 		findViewsByIds();
 		initViews();
 		setListeners();
-		update();		
 			
 	}
 	
 	private void initViews() {
-		//expensesAdapter = new ExpenseAdapter(this, R.layout.expenses_layout, claim.expenses);
 		
-		//expensesListView.setAdapter(expensesAdapter);		
 	}
 
 	@Override
     protected void onResume() {
 		super.onResume();
-    	update();
     }
+	
 
 
 	private void setListeners() {
@@ -72,27 +63,11 @@ public class EditClaimActivity extends SerializingActivity {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(!hasFocus) {
 					claim.setDescription(descriptionTextView.getText().toString());
-					update();
 				}
 				
 			}
 		});
-		
-		/*expensesListView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                    long id) {
-            	
-                Intent intent = new Intent(EditClaimActivity.this, ExpenseActivity.class);
-                
-            	Expense expense = (Expense) parent.getItemAtPosition(position);
-                intent.putExtra("CLAIM_ID", EditClaimActivity.this.claim.getID());
-                intent.putExtra("EXPENSE_ID", expense.getID());
-                
-                startActivity(intent);
-            }
-		});*/
-		
+				
 		Calendar startCalendar = claim.getStartCalendar();
 		
 		startDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -106,9 +81,9 @@ public class EditClaimActivity extends SerializingActivity {
 				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 				
 				startDate.clearFocus();
+				//TODO: Validate, make sure that we still have the thingers i actually don't knwo what this means...
 				
-				update();
-				
+								
 			}
 			
 		}, startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH), startCalendar.get(Calendar.DAY_OF_MONTH));
@@ -125,7 +100,6 @@ public class EditClaimActivity extends SerializingActivity {
 				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
 				endDate.clearFocus();
-				update();
 				
 				
 			}
@@ -163,6 +137,10 @@ public class EditClaimActivity extends SerializingActivity {
 				
 		ClaimManager claimManager = ClaimManager.getInstance();
 		
+		claim = claimManager.extractClaim(savedInstanceState, getIntent());
+		
+		//TODO: maybe we can extract this to the claimManager
+		
 		if(savedInstanceState == null) {
 		
 			//Try to get claim from intent
@@ -174,7 +152,7 @@ public class EditClaimActivity extends SerializingActivity {
 		}
 		
 		if(claim == null) {
-			//TODO: an error occurred, fail gracefully
+			//TODO: an error occurred, fail gracefully also add this in for the expenses and other thingermajgers
 			finish();
 		}
 		
@@ -186,46 +164,6 @@ public class EditClaimActivity extends SerializingActivity {
 		endDate = (EditText) findViewById(R.id.edit_claim_end_date);
 		//expensesListView = (ListView) findViewById(R.id.edit_claim_expense_list);
 	}
-	
-	private void update() {
-		
-		if(claim.getDescription().isEmpty()){
-			setTitle("New Claim");
-		} else {
-			setTitle(claim.getDescription());
-		}
-		
-		descriptionTextView.setText(claim.getDescription());
-		//expensesAdapter.notifyDataSetChanged();
-		
-		
-		DateFormat formatter = DateFormat.getDateInstance();
-		
-		startDate.setText(formatter.format(claim.getStartCalendar().getTime()));
-		endDate.setText(formatter.format(claim.getEndCalendar().getTime()));
-
-	}
-
-	
-	public void submitEdittedClaim(View view) {
-		//TODO: Maybe we should move the "submit" button into the action bar
-		finish();
-	}
-	
-//	public void createExpense(View view) {
-//
-//		ClaimManager claimManager = ClaimManager.getInstance();
-//		Expense expense = claimManager.createNewExpense(claim);
-//		
-//		Intent createExpenseIntent = new Intent(this, ExpenseActivity.class);
-//		
-//		createExpenseIntent.putExtra("EXPENSE_ID", expense.getId());
-//		createExpenseIntent.putExtra("CLAIM_ID", claim.getID());
-//		
-//		startActivity(createExpenseIntent);		
-//	}
-	
-	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -242,13 +180,31 @@ public class EditClaimActivity extends SerializingActivity {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
-		} else if(id == R.id.action_delete_claim) {
-			//TODO: Delete from edit, what happens then?
-			
-			ClaimManager claimManager = ClaimManager.getInstance();
-			claimManager.deleteClaim(claim);
-			finish();
+		}  else if(id == R.id.action_finish_edit_claim) {
+			submitEdits();
 		}
 		return super.onOptionsItemSelected(item);
 	}	
+
+	private void submitEdits() {
+		//TODO: only submit edits if the current form is valid
+		
+		if(validate()) {
+			//TODO: submit edits to claims
+			
+			
+		} else {
+			Toast toast = Toast.makeText(this, "Make sure all fields contain valid input!", Toast.LENGTH_SHORT);
+			toast.show();
+		}
+		
+	}
+
+	private boolean validate() {
+		// TODO: Finish me!!!!
+		return false;
+	}
+
 }
+
+

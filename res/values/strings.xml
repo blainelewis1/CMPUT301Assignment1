@@ -16,7 +16,7 @@
     <string name="description">Description</string>
     <string name="claim_end">Claim End:</string>
     <string name="claim_start">Claim Start:</string>
-    <string name="delete">Delete</string>
+    <string name="accept">Accept</string>
     <string name="new_expense">New Expense</string>
     <string name="edit">Edit</string>
     <string name="email">Email</string>
