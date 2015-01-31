@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">CMPUT 301 Assignment 1</string>
+    <string name="title_activity_list_claims">Claims</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_expense">New Expense</string>
+    <string name="title_activity_claim">ClaimActivity</string>
+    <string name="title_activity_edit_claim">EditClaimActivity</string>
+    <string name="approve">Approve</string>
+    <string name="submit">Submit</string>
+    <string name="return_string">Return</string>
+    <string name="claim_dates">Claim Dates</string>
+    <string name="status">Status</string>
+    <string name="description">Description</string>
+    <string name="claim_end">Claim End:</string>
+    <string name="claim_start">Claim Start:</string>
+    <string name="delete">Delete</string>
+    <string name="new_expense">New Expense</string>
+    <string name="edit">Edit</string>
+    <string name="email">Email</string>
+
+</resources>

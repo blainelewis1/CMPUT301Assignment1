@@ -1,0 +1,263 @@
+package blainelewis1.cmput301assignment1;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.Html;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import blainelewis1.cmput301assignment1.Claim.Status;
+
+public class ClaimActivity extends SerializingActivity {
+
+	//TODO: should edit claim activity extend claim activity
+	
+	private Claim claim;
+	
+	private Button submitClaim;
+	private Button approveClaim;
+	private Button returnClaim;
+
+	private TextView descriptionTextView;
+	private TextView datesTextView;
+	private ListView claimTotalList;
+	private TextView statusTextView;
+	private ListView expensesList;
+
+	private ExpenseAdapter expensesAdapter;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_claim);
+		
+		loadClaim(savedInstanceState);
+
+		findViewsByIds();
+		initViews();
+		setListeners();
+		update();
+	}
+	
+	private void setListeners() {
+		
+		expensesList.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+	        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	        	
+				if(ClaimActivity.this.claim.isEditable()) {
+		            Intent intent = new Intent(ClaimActivity.this, ExpenseActivity.class);
+		            
+		        	Expense expense = (Expense) parent.getItemAtPosition(position);
+		            intent.putExtra("CLAIM_ID", ClaimActivity.this.claim.getID());
+		            intent.putExtra("EXPENSE_ID", expense.getId());
+		            
+		            startActivity(intent);
+				} else {
+					Toast toast = Toast.makeText(ClaimActivity.this, "Claim isn't editable while awaiting approval.", Toast.LENGTH_SHORT);
+					toast.show();
+				}
+	        }
+		});
+	}
+
+	private void initViews() {
+		expensesAdapter = new ExpenseAdapter(this, R.layout.expenses_layout, claim.getExpenses());
+		
+		expensesList.setAdapter(expensesAdapter);
+
+	}
+
+	private void loadClaim(Bundle savedInstanceState) {
+		ClaimManager claimManager = ClaimManager.getInstance();
+		
+		
+		if(savedInstanceState == null) {
+			//Try to get claim from intent
+			Intent intent = getIntent();
+			claim = claimManager.getClaimById(intent.getStringExtra("CLAIM_ID"));
+			
+		} else {
+			claim = claimManager.getClaimById(savedInstanceState.getString("CLAIM_ID"));
+		}
+	}
+
+	private void update() {
+		
+		if(claim.getDescription().isEmpty()){
+			setTitle("New Claim");
+		} else {
+			setTitle(claim.getDescription());
+		}
+		
+		descriptionTextView.setText(claim.getDescription());
+		
+		DateFormat dateFormatter = DateFormat.getDateInstance();
+		
+		datesTextView.setText(dateFormatter.format(claim.getStartCalendar().getTime()) + " - " + dateFormatter.format(claim.getStartCalendar().getTime()));
+		statusTextView.setText(claim.getStatusString());
+		
+		//Amounts will not be updated if expenses are, need to be recomputed
+		ArrayList<String> amounts = claim.getTotalsAsStrings();
+		
+		claimTotalList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, amounts));
+		
+		expensesAdapter.notifyDataSetChanged();
+		
+		invalidateOptionsMenu();
+		toggleButtonVisibilities();
+		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		update();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.claim, menu);
+		
+		menu.findItem(R.id.action_edit_claim).setEnabled(claim.isEditable());
+		menu.findItem(R.id.action_add_expense).setEnabled(claim.isEditable());
+		
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		} else if(id == R.id.action_delete_claim) {
+			deleteClaim();
+		} else if(id == R.id.action_edit_claim) {
+			editClaim();			
+		} else if(id == R.id.action_email_claim) {
+			emailClaim();
+		} else if(id == R.id.action_add_expense) {
+			createExpense();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void emailClaim() {
+	    Intent intent = new Intent(Intent.ACTION_SENDTO);
+		intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+		intent.putExtra(Intent.EXTRA_SUBJECT, claim.getDescription());
+		intent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(claim.getHTMLRepresentation()));
+		if (intent.resolveActivity(getPackageManager()) != null) {
+			startActivity(intent);
+		}
+		
+		
+	}
+	
+	private void deleteClaim() {
+		ClaimManager claimManager = ClaimManager.getInstance();
+		claimManager.deleteClaim(claim);
+		finish();
+	}
+	
+	
+	private void findViewsByIds() {
+	
+		submitClaim = (Button) findViewById(R.id.submitClaim);
+		approveClaim = (Button) findViewById(R.id.approveClaim);
+		returnClaim = (Button) findViewById(R.id.returnClaim);
+		
+		descriptionTextView = (TextView) findViewById(R.id.claimDescription);
+		datesTextView = (TextView) findViewById(R.id.claim_dates);
+		claimTotalList = (ListView) findViewById(R.id.totalCostsList);
+		statusTextView = (TextView) findViewById(R.id.claimStatus);
+		expensesList = (ListView) findViewById(R.id.claim_expense_list);
+		
+	}
+	
+	private void toggleButtonVisibilities(){
+
+		switch (claim.getStatus()){
+			case IN_PROGRESS:
+				submitClaim.setVisibility(View.VISIBLE);
+				approveClaim.setVisibility(View.GONE);
+				returnClaim.setVisibility(View.GONE);
+				break;
+			case SUBMITTED:
+				approveClaim.setVisibility(View.VISIBLE);
+				returnClaim.setVisibility(View.VISIBLE);
+				submitClaim.setVisibility(View.GONE);
+				break;
+			case RETURNED:
+				approveClaim.setVisibility(View.GONE);
+				returnClaim.setVisibility(View.GONE);
+				submitClaim.setVisibility(View.VISIBLE);
+				break;
+			case APPROVED:
+				approveClaim.setVisibility(View.GONE);
+				returnClaim.setVisibility(View.GONE);
+				submitClaim.setVisibility(View.GONE);
+				break;
+			default:
+				break;
+		}
+		
+	}
+	
+	public void setClaimApproved(View view) {
+		claim.setStatus(Status.APPROVED);
+
+		update();
+	}	
+	
+	public void setClaimReturned(View view) {
+		claim.setStatus(Status.RETURNED);
+
+		update();
+	}	
+	
+	public void setClaimSubmitted(View view) {
+		claim.setStatus(Status.SUBMITTED);
+
+		update();		
+	}
+	
+	private void editClaim() {		
+		//Pass the intent		
+		Intent intent = new Intent(this, EditClaimActivity.class);
+		
+		intent.putExtra("CLAIM_ID", claim.getID());
+		
+    	startActivity(intent);	 
+	}
+	
+	public void createExpense() {
+
+		ClaimManager claimManager = ClaimManager.getInstance();
+		Expense expense = claimManager.createNewExpense(claim);
+		
+		Intent createExpenseIntent = new Intent(this, ExpenseActivity.class);
+		
+		createExpenseIntent.putExtra("EXPENSE_ID", expense.getId());
+		createExpenseIntent.putExtra("CLAIM_ID", claim.getID());
+		
+		startActivity(createExpenseIntent);		
+	}
+
+}

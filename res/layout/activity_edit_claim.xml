@@ -1,0 +1,71 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:focusable="true"
+    >
+
+    <EditText
+        android:id="@+id/edit_claim_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/description"
+        android:inputType="textMultiLine" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/edit_claim_start_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/claim_start"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/edit_claim_start_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="date" />
+
+    <TextView
+        android:id="@+id/edit_claim_end_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/claim_end"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/edit_claim_end_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="date" />
+    
+	<!-- 
+    <ListView
+        android:id="@+id/edit_claim_expense_list"
+        android:layout_width="match_parent"
+        android:layout_height="132dp"
+        android:layout_weight="0.18" 
+        >
+    </ListView>
+
+    <Button
+        android:id="@+id/edit_claim_create_expense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="createExpense"
+        android:text="Create Expense" />
+	-->
+	
+    <Button
+        android:id="@+id/edit_claim_submit_claim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="submitEdittedClaim"
+        android:text="@string/submit" />
+
+</LinearLayout>

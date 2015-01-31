@@ -1,0 +1,40 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="blainelewis1.cmput301assignment1.ClaimActivity" >
+
+     <item
+        android:id="@+id/action_delete_claim"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_discard"
+        android:title="@string/delete"/>
+     
+     <item
+        android:id="@+id/action_add_expense"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_new"
+        android:title="@string/new_expense"/>
+	
+	<item
+        android:id="@+id/action_edit_claim"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_edit"
+        android:title="@string/edit"/>
+	
+	
+	
+	<item
+        android:id="@+id/action_email_claim"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_email"
+        android:title="@string/email"/>
+	
+	<item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+</menu>
