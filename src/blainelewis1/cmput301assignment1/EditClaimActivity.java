@@ -8,7 +8,8 @@ import java.util.Date;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //TODO: validate is being called too often
+//TODO: description shouldn't be validated the instant you enter... 
+//TODO: dates are formatted with the time, thats wrong
 
 public class EditClaimActivity extends Activity {		
 		
@@ -26,8 +29,8 @@ public class EditClaimActivity extends Activity {
 		
 		
 		private EditText descriptionEditText;
-		private EditText startDate;
-		private EditText endDate;
+		private EditText startDateEditText;
+		private EditText endDateEditText;
 		
 		private DatePickerDialog startDatePickerDialog;
 		private DatePickerDialog endDatePickerDialog;
@@ -54,10 +57,10 @@ public class EditClaimActivity extends Activity {
 	}
 	
 	private void initViews() {
-		DateFormat formatter = DateFormat.getInstance();
+		DateFormat formatter = DateFormat.getDateInstance();
 		
-		startDate.setText(formatter.format(claim.getStartCalendar().getTime()));
-		endDate.setText(formatter.format(claim.getEndCalendar().getTime()));
+		startDateEditText.setText(formatter.format(claim.getStartCalendar().getTime()));
+		endDateEditText.setText(formatter.format(claim.getEndCalendar().getTime()));
 		
 		descriptionEditText.setText(claim.getDescription());
 
@@ -65,12 +68,25 @@ public class EditClaimActivity extends Activity {
 
 	private void setListeners() {
 		
-		descriptionEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
+		TextWatcher validatingTextWatcher = new TextWatcher(){
+
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				validate();				
+			public void beforeTextChanged(CharSequence s, int start, int count,	int after) {}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				validate();
 			}
-		});
+			
+						
+		};
+	
+		startDateEditText.addTextChangedListener(validatingTextWatcher);
+		descriptionEditText.addTextChangedListener(validatingTextWatcher);
+		endDateEditText.addTextChangedListener(validatingTextWatcher);
 				
 		Calendar startCalendar = claim.getStartCalendar();
 		
@@ -79,14 +95,12 @@ public class EditClaimActivity extends Activity {
 			public void onDateSet(DatePicker view, int year, int monthOfYear,
 					int dayOfMonth) {
 				
-				startDate.setText(formatDate(year, monthOfYear, dayOfMonth));
+				startDateEditText.setText(formatDate(year, monthOfYear, dayOfMonth));
 				
 				//TODO: less hacky but it really doesn't work...
-				startDate.clearFocus();
+				startDateEditText.clearFocus();
 				layout.requestFocus();
-				
-				validate();
-								
+												
 			}
 			
 		}, startCalendar.get(Calendar.YEAR), startCalendar.get(Calendar.MONTH), startCalendar.get(Calendar.DAY_OF_MONTH));
@@ -98,44 +112,39 @@ public class EditClaimActivity extends Activity {
 			public void onDateSet(DatePicker view, int year, int monthOfYear,
 					int dayOfMonth) {
 				
-				endDate.setText(formatDate(year, monthOfYear, dayOfMonth));
+				endDateEditText.setText(formatDate(year, monthOfYear, dayOfMonth));
 
-				startDate.clearFocus();
-				layout.requestFocus();				
-				validate();
-				
+				startDateEditText.clearFocus();
+				layout.requestFocus();								
 			}
 			
 		}, endCalendar.get(Calendar.YEAR), endCalendar.get(Calendar.MONTH), endCalendar.get(Calendar.DAY_OF_MONTH));
 		
-		startDate.setOnFocusChangeListener(new OnFocusChangeListener() {
+		startDateEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
 
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(hasFocus) {
 					
-					Calendar calendar = extractDateFromEditText(startDate);
-					
+					Calendar calendar = extractDateFromEditText(startDateEditText);
 					
 					startDatePickerDialog.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 					startDatePickerDialog.show();
-					validate();
 				}
 				
 			}
 			
 		});
 		
-		endDate.setOnFocusChangeListener(new OnFocusChangeListener() {
+		endDateEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(hasFocus) {
 					
-					Calendar calendar = extractDateFromEditText(endDate);
+					Calendar calendar = extractDateFromEditText(endDateEditText);
 					
 					endDatePickerDialog.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 					endDatePickerDialog.show();
-					validate();
 				}
 				
 			}
@@ -151,13 +160,13 @@ public class EditClaimActivity extends Activity {
 		calendar.set(Calendar.MONTH, monthOfYear);
 		calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 		
-		return DateFormat.getInstance().format(calendar.getTime());
+		return DateFormat.getDateInstance().format(calendar.getTime());
 	}
 
 	private void findViewsByIds() {
 		descriptionEditText = (EditText) findViewById(R.id.edit_claim_description);
-		startDate = (EditText) findViewById(R.id.edit_claim_start_date);
-		endDate = (EditText) findViewById(R.id.edit_claim_end_date);
+		startDateEditText = (EditText) findViewById(R.id.edit_claim_start_date);
+		endDateEditText = (EditText) findViewById(R.id.edit_claim_end_date);
 		layout = (LinearLayout) findViewById(R.id.edit_claim_layout);
 	}
 
@@ -191,8 +200,7 @@ public class EditClaimActivity extends Activity {
 		if(validate()) {
 			
 			claim.setDescription(descriptionEditText.getText().toString());
-			claim.setEndCalendar(extractDateFromEditText(endDate));
-			claim.setStartCalendar(extractDateFromEditText(startDate));
+			claim.setDateRange(extractDateFromEditText(startDateEditText), extractDateFromEditText(endDateEditText));
 			
 			ClaimManager.getInstance().serialize(this);
 						
@@ -206,7 +214,7 @@ public class EditClaimActivity extends Activity {
 	}
 
 	private Calendar extractDateFromEditText(EditText editText) {
-		DateFormat formatter = DateFormat.getInstance();
+		DateFormat formatter = DateFormat.getDateInstance();
 		Date date = null;
 		try {
 			date = formatter.parse(editText.getText().toString());
@@ -224,14 +232,12 @@ public class EditClaimActivity extends Activity {
 		
 		if(descriptionEditText.getText().toString().isEmpty()) {
 			descriptionEditText.setError("Description cannot be empty!");
-			Log.e("uhhh", "description!!!!");
 
 			valid = false;
 		}
 
-		if(!claim.isDateRangeValid(extractDateFromEditText(startDate), extractDateFromEditText(endDate))) {
-			//TODO: set error text etc.
-			Log.e("uhhh", "claim range....!!!!");
+		if(!claim.isDateRangeValid(extractDateFromEditText(startDateEditText), extractDateFromEditText(endDateEditText))) {
+			//TODO: set error text etc, find a way to signal the error.
 
 			valid = false;
 		}

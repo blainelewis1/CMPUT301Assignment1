@@ -1,6 +1,5 @@
 package blainelewis1.cmput301assignment1;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -93,18 +92,16 @@ public class ClaimActivity extends Activity {
 		
 		descriptionTextView.setText(claim.getDescription());
 		
-		DateFormat dateFormatter = DateFormat.getDateInstance();
 		
-		datesTextView.setText(dateFormatter.format(claim.getStartCalendar().getTime()) + " - " + dateFormatter.format(claim.getStartCalendar().getTime()));
+		datesTextView.setText(claim.getFormattedDateRange());
 		statusTextView.setText(claim.getStatusString());
 		
-		//Amounts will not be updated if expenses are, need to be recomputed
 		ArrayList<String> amounts = claim.getTotalsAsStrings();
 		
 		claimTotalList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, amounts));
 		
 		expensesAdapter.notifyDataSetChanged();
-		
+				
 		invalidateOptionsMenu();
 		toggleButtonVisibilities();
 		
@@ -122,8 +119,10 @@ public class ClaimActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.claim, menu);
 		
-		menu.findItem(R.id.action_edit_claim).setEnabled(claim.isEditable());
-		menu.findItem(R.id.action_add_expense).setEnabled(claim.isEditable());
+		//TODO: is having the buttons invisible a good idea? How will the user understand that this is possible?
+		
+		menu.findItem(R.id.action_edit_claim).setVisible(claim.isEditable());
+		menu.findItem(R.id.action_add_expense).setVisible(claim.isEditable());
 		
 		return true;
 	}

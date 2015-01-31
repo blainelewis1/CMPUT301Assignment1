@@ -1,5 +1,9 @@
 package blainelewis1.cmput301assignment1;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,9 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ListClaimsActivity extends Activity {
 	
@@ -17,6 +21,7 @@ public class ListClaimsActivity extends Activity {
 	
 	private ListView claimsListView;
 	private ClaimAdapter claimsListAdapter;
+	private ArrayList<Claim> claims;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +53,10 @@ public class ListClaimsActivity extends Activity {
 
 	private void initViews() {
 		ClaimManager claimManager = ClaimManager.getInstance();
-		claimsListAdapter = new ClaimAdapter(this, R.layout.claim_layout, claimManager.getClaimsSortedByStartDate());
+		
+		//TODO: this is super duper ugly
+		ArrayList<Claim> claims = claimManager.getClaims();
+		claimsListAdapter = new ClaimAdapter(this, R.layout.claim_layout, claims);
 		claimsListView.setAdapter(claimsListAdapter);
 		
 		if(claimsListAdapter.isEmpty()) {
@@ -92,6 +100,16 @@ public class ListClaimsActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 		
+		//Force the list to resort......
+		Collections.sort(claims, new Comparator<Claim>() {
+			@Override
+			public int compare(Claim claim1, Claim claim2) {
+				return claim1.getStartCalendar().compareTo(
+						claim2.getStartCalendar());
+			}
+		});
+
+				
 		claimsListAdapter.notifyDataSetChanged();
 	}
 }

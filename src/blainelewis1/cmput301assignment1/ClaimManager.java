@@ -206,4 +206,8 @@ public class ClaimManager {
 		return intent;
 	}
 
+	public ArrayList<Claim> getClaims() {
+		return claims;
+	}
+
 }

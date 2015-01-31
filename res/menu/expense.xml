@@ -7,7 +7,7 @@
         android:id="@+id/action_finish_edit_expense"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_discard"
+        android:icon="@drawable/ic_action_accept"
         android:title="@string/accept"/>
     
     <item

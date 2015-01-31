@@ -1,5 +1,6 @@
 package blainelewis1.cmput301assignment1;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -9,6 +10,8 @@ import java.util.Date;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +25,8 @@ public class ExpenseActivity extends Activity {
 	
 	//TODO: what if back on a new claim, maybe pass flag in intent, because it needs to be deleted
 	//TODO: clicking back is going back for some reason....
-	
+	//TODO: should the descriptions really be multiline... 
+	//TODO: move validation to while typing? Hmmm maybe I need to test with onescreen keyboard
 	private Expense expense;
 	
 	private Claim claim;
@@ -56,18 +60,29 @@ public class ExpenseActivity extends Activity {
 	}
 
 	private void setListeners() {
-				
-		OnFocusChangeListener validatingFocusChange = new OnFocusChangeListener() {
+
+		
+		TextWatcher validatingTextWatcher = new TextWatcher(){
+
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
+			public void beforeTextChanged(CharSequence s, int start, int count,	int after) {}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+			@Override
+			public void afterTextChanged(Editable s) {
 				validate();
 			}
-
+			
+						
 		};
 		
-		descriptionEditText.setOnFocusChangeListener(validatingFocusChange);
-		amountEditText.setOnFocusChangeListener(validatingFocusChange);
 
+		amountEditText.addTextChangedListener(validatingTextWatcher);
+		descriptionEditText.addTextChangedListener(validatingTextWatcher);
+		dateEditText.addTextChangedListener(validatingTextWatcher);
+		
 		Calendar calendar = expense.getCalendar();
 		
 		datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -81,11 +96,14 @@ public class ExpenseActivity extends Activity {
 				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 				
 				
-				DateFormat formatter = DateFormat.getInstance();
+				DateFormat formatter = DateFormat.getDateInstance();
 				dateEditText.setText(formatter.format(calendar.getTime()));
 				
 				//TODO: this is extremely hacky forces focus where it doesn't need to be, we should focus the next item
-				dateEditText.clearFocus();				
+				dateEditText.clearFocus();	
+				
+				validate();
+
 			}
 			
 		}, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -95,12 +113,10 @@ public class ExpenseActivity extends Activity {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(hasFocus) {
 					
-				
 					Calendar calendar = extractDate();
-					
-					
 					datePickerDialog.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 					datePickerDialog.show();
+					
 				}
 				
 			}
@@ -110,7 +126,7 @@ public class ExpenseActivity extends Activity {
 	
 	private Calendar extractDate() {
 		
-		DateFormat formatter = DateFormat.getInstance();
+		DateFormat formatter = DateFormat.getDateInstance();
 		Date date = null;
 		try {
 			date = formatter.parse(dateEditText.getText().toString());
@@ -139,7 +155,7 @@ public class ExpenseActivity extends Activity {
 		
 		descriptionEditText.setText(expense.getDescription());
 		
-		DateFormat formatter = DateFormat.getInstance();
+		DateFormat formatter = DateFormat.getDateInstance();
 		
 		dateEditText.setText(formatter.format(expense.getCalendar().getTime()));
 		
@@ -189,7 +205,7 @@ public class ExpenseActivity extends Activity {
 		if(validate()) {
 
 			
-			expense.setAmount(Integer.parseInt(amountEditText.getText().toString()));
+			expense.setAmount(new BigDecimal(amountEditText.getText().toString()));
 			expense.setDescription(descriptionEditText.getText().toString());
 			expense.setCalendar(extractDate());			
 			expense.setCategory((String) categorySpinner.getSelectedItem());
@@ -218,7 +234,7 @@ public class ExpenseActivity extends Activity {
 			valid = false;
 			
 		} else {
-			setTitle(descriptionEditText.toString());
+			setTitle(descriptionEditText.getText().toString());
 		}
 		
 		invalidateOptionsMenu();

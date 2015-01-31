@@ -1,5 +1,7 @@
 package blainelewis1.cmput301assignment1;
+import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Currency;
@@ -24,7 +26,7 @@ public class Expense {
 	private Calendar calendar;
 	private String category;
 	private String description;
-	private double amount;
+	private BigDecimal amount;
 	private Currency currency;
 	private String id;
 	
@@ -48,19 +50,19 @@ public class Expense {
 	
 
 	
-	public Expense  (Calendar calendar, String category, String description, int amount, Currency currency) {
+	public Expense  (Calendar calendar, String category, String description, BigDecimal amount, Currency currency) {
 		id = UUID.randomUUID().toString();
 		
 		setAmount(amount);
 		setCategory(category);
 		setCurrency(currency);
 		setCalendar(calendar);
-		setDescription(description);	
+		this.description = description;	
 		
 	}
 
 	public Expense(Claim claim) {
-		this(claim.getStartCalendar(), "meal", "", 1, Currency.getInstance(Locale.getDefault()));
+		this(claim.getStartCalendar(), "meal", "", new BigDecimal("0.00"), Currency.getInstance(Locale.getDefault()));
 	}
 
 	public Calendar getCalendar() {
@@ -103,15 +105,11 @@ public class Expense {
 		this.description = description;
 	}
 
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(double amount) {
-		if(amount <= 0) {
-			throw new IllegalArgumentException("Amount must be greater than 0!");
-		}
-		
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 
@@ -132,7 +130,12 @@ public class Expense {
 	}
 
 	public String getReadableAmount() {
-		return currency.toString() + String.valueOf(amount);
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+		formatter.setCurrency(currency);
+		formatter.setMaximumFractionDigits(currency.getDefaultFractionDigits());
+		formatter.setMinimumFractionDigits(currency.getDefaultFractionDigits());
+		return /*currency.toString() +*/ formatter.format(amount);
+
 	}
 	
 	public String getHTMLRepresentation() {

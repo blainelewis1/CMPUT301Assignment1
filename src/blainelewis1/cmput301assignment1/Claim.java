@@ -1,4 +1,5 @@
 package blainelewis1.cmput301assignment1;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,8 +33,7 @@ public class Claim {
 		
 		id = UUID.randomUUID().toString();
 		
-		setStartCalendar(startCalendar);
-		setEndCalendar(endCalendar);
+		setDateRange(startCalendar, endCalendar);
 		setDescription(description);
 		
 		expenses = new ArrayList<Expense>();
@@ -67,42 +67,28 @@ public class Claim {
 		return startCalendar;
 	}
 
-	public void setStartCalendar(Calendar startCalendar) {
+	public void setDateRange(Calendar startCalendar, Calendar endCalendar) {
 		if(startCalendar == null) {
 			throw new IllegalArgumentException("Start calendar cannot be null!");
+		}
+		if(endCalendar == null) {
+			throw new IllegalArgumentException("End calendar cannot be null!");
 		}
 		
 		if(!this.isEditable()){
 			throw new IllegalArgumentException("Claim is not in an editable state.");
 		}
 		
-		if(endCalendar != null && startCalendar.compareTo(this.endCalendar) > 0){
+		if(!isDateRangeValid(startCalendar, endCalendar)){
 			throw new IllegalArgumentException("Start calendar must be before end calendar.");
 		}
 		
 		this.startCalendar = startCalendar;
+		this.endCalendar = endCalendar;
 	}
 
 	public Calendar getEndCalendar() {
 		return endCalendar;
-	}
-
-	public void setEndCalendar(Calendar endCalendar) {
-		if(endCalendar == null) {
-			throw new IllegalArgumentException("End calendar cannot be null!");
-		}
-		
-		if(!this.isEditable()){
-			throw new IllegalStateException("Claim is not in an editable state.");
-		}
-		
-		 if(startCalendar != null && endCalendar.compareTo(this.startCalendar) < 0){
-		 
-			throw new IllegalArgumentException("Start calendar must be before end calendar.");
-		}
-		
-		
-		this.endCalendar = endCalendar;
 	}
 
 	public String getDescription() {
@@ -152,22 +138,22 @@ public class Claim {
 	}
 
 	public ArrayList<String> getTotalsAsStrings() {
-		HashMap<String, Double> totals = new HashMap<String, Double>();
+		HashMap<String, BigDecimal> totals = new HashMap<String, BigDecimal>();
 		
 		for(Expense expense : expenses) {
-			Double current = totals.get(expense.getCurrency());
+			BigDecimal current = totals.get(expense.getCurrency());
 			
 			if(current == null) {
 				totals.put(expense.getCurrency().getSymbol(), expense.getAmount());
 			} else { 
-				totals.put(expense.getCurrency().getSymbol(), expense.getAmount() + current);
+				totals.put(expense.getCurrency().getSymbol(), expense.getAmount().add(current));
 			}
 
 		}
 
 		ArrayList<String> totalStrings = new ArrayList<String>();
 		
-		for(Entry<String, Double> total : totals.entrySet()) {
+		for(Entry<String, BigDecimal> total : totals.entrySet()) {
 			totalStrings.add(total.getKey() + 
 							String.valueOf(total.getValue()));
 		}
@@ -219,9 +205,9 @@ public class Claim {
 		return sb.toString();
 	}
 
-	public boolean isDateRangeValid(Calendar startDate,
-			Calendar endDate) {
-		return startDate.compareTo(endDate) <= 0 && endDate.compareTo(startDate) >= 0;
+	public boolean isDateRangeValid(Calendar startCalendar,
+			Calendar endCalendar) {
+		return startCalendar.compareTo(endCalendar) <= 0 && endCalendar.compareTo(startCalendar) >= 0;
 	}
 
 }
