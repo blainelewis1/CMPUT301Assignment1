@@ -40,8 +40,9 @@ public class ClaimActivity extends SerializingActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_claim);
 		
-		loadClaim(savedInstanceState);
+		claim = ClaimManager.getInstance().extractClaim(savedInstanceState, getIntent());
 
+		
 		findViewsByIds();
 		initViews();
 		setListeners();
@@ -83,21 +84,7 @@ public class ClaimActivity extends SerializingActivity {
 		}
 
 	}
-
-	private void loadClaim(Bundle savedInstanceState) {
-		ClaimManager claimManager = ClaimManager.getInstance();
-		
-		
-		if(savedInstanceState == null) {
-			//Try to get claim from intent
-			Intent intent = getIntent();
-			claim = claimManager.getClaimById(intent.getStringExtra("CLAIM_ID"));
-			
-		} else {
-			claim = claimManager.getClaimById(savedInstanceState.getString("CLAIM_ID"));
-		}
-	}
-
+	
 	private void update() {
 		
 		if(claim.getDescription().isEmpty()){

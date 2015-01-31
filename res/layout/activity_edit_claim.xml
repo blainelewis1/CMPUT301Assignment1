@@ -44,28 +44,5 @@
         android:ems="10"
         android:inputType="date" />
     
-	<!-- 
-    <ListView
-        android:id="@+id/edit_claim_expense_list"
-        android:layout_width="match_parent"
-        android:layout_height="132dp"
-        android:layout_weight="0.18" 
-        >
-    </ListView>
-
-    <Button
-        android:id="@+id/edit_claim_create_expense"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="createExpense"
-        android:text="Create Expense" />
-	-->
 	
-    <Button
-        android:id="@+id/edit_claim_submit_claim"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="submitEdittedClaim"
-        android:text="@string/submit" />
-
 </LinearLayout>

@@ -12,6 +12,8 @@ import android.widget.ListView;
 
 public class ListClaimsActivity extends SerializingActivity {
 	
+	//TODO: claims and expenses with long descriptions look ugly, make them wrap or end in ellipse or something
+	
 	private ListView claimsListView;
 	private ClaimAdapter claimsListAdapter;
 	
@@ -33,7 +35,7 @@ public class ListClaimsActivity extends SerializingActivity {
                     long id) {
             	
             	Claim claim = (Claim) parent.getItemAtPosition(position);
-                Intent intent = ClaimManager.getInstance().getEditClaimIntent(ListClaimsActivity.this, claim);
+                Intent intent = ClaimManager.getInstance().getViewClaimIntent(ListClaimsActivity.this, claim);
 
                 startActivity(intent);
             }

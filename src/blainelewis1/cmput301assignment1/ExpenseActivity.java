@@ -7,21 +7,19 @@ import java.util.Currency;
 import java.util.Date;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 public class ExpenseActivity extends SerializingActivity {
 	
-	//TODO: where should expenses be deleted from
+	//TODO: what if back on a new claim, maybe pass flag in intent, because it needs to be deleted
 	
 	private Expense expense;
 	
@@ -36,7 +34,8 @@ public class ExpenseActivity extends SerializingActivity {
 	private ArrayAdapter<String> categoryAdapter;
 	private ArrayAdapter<Currency> currencyAdapter;
 
-	private Button finishButton;
+	private boolean valid;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,10 @@ public class ExpenseActivity extends SerializingActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_expense);
 		
-		loadClaimAndExpense(savedInstanceState);
+		claim = ClaimManager.getInstance().extractClaim(savedInstanceState, getIntent());
+		expense = ClaimManager.getInstance().extractExpense(savedInstanceState, getIntent(), claim);
+
+		
 		findViewsByIds();
 		initViews();
 		setListeners();
@@ -133,21 +135,12 @@ public class ExpenseActivity extends SerializingActivity {
 		
 		categorySpinner.setAdapter(categoryAdapter);
 		
-	}
-
-	private void loadClaimAndExpense(Bundle savedInstanceState) {
-		ClaimManager claimManager = ClaimManager.getInstance();
+		descriptionEditText.setText(expense.getDescription());
 		
-		if(savedInstanceState == null) {
-			//Try to get claim from intent
-			Intent intent = getIntent();
-			claim = claimManager.getClaimById(intent.getStringExtra("CLAIM_ID"));
-			expense = claim.getExpenseByID(intent.getStringExtra("EXPENSE_ID"));
-			
-		} else {
-			claim = claimManager.getClaimById(savedInstanceState.getString("CLAIM_ID"));
-			expense = claim.getExpenseByID(savedInstanceState.getString("EXPENSE_ID"));
-		}
+		DateFormat formatter = DateFormat.getInstance();
+		
+		dateEditText.setText(formatter.format(expense.getCalendar().getTime()));
+		
 	}
 	
 	private void findViewsByIds() {
@@ -156,15 +149,15 @@ public class ExpenseActivity extends SerializingActivity {
 		dateEditText = (EditText) findViewById(R.id.edit_expense_date);
 		descriptionEditText = (EditText) findViewById(R.id.edit_expense_description);
 		amountEditText = (EditText) findViewById(R.id.edit_expense_amount);
-		categorySpinner = (Spinner) findViewById(R.id.edit_expense_category);
-		finishButton = (Button) findViewById(R.id.action_finish_edit_expense);
-	
+		categorySpinner = (Spinner) findViewById(R.id.edit_expense_category);	
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.expense, menu);
+
+		menu.findItem(R.id.action_finish_edit_expense).setVisible(valid);
 		
 		return true;
 	}
@@ -182,6 +175,8 @@ public class ExpenseActivity extends SerializingActivity {
 		} else if(id == R.id.action_finish_edit_expense) {
 			submitExpense();
 		}
+		
+		
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -203,8 +198,7 @@ public class ExpenseActivity extends SerializingActivity {
 	}
 	
 	private boolean validate() {
-		boolean valid = true;
-		
+		valid = true;
 		
 		//TODO: this is easier to tell after forum reply
 		if(Integer.parseInt(amountEditText.getText().toString()) <= 0) {
@@ -225,13 +219,6 @@ public class ExpenseActivity extends SerializingActivity {
 			
 		} else {
 			setTitle(descriptionEditText.toString());
-		}
-		
-		
-		if(!valid) {
-			finishButton.setVisibility(View.GONE);
-		} else {
-			finishButton.setVisibility(View.VISIBLE);	
 		}
 		
 		invalidateOptionsMenu();

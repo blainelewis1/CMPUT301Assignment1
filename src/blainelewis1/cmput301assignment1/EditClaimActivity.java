@@ -11,9 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class EditClaimActivity extends SerializingActivity {		
 		
@@ -28,33 +28,32 @@ public class EditClaimActivity extends SerializingActivity {
 		private DatePickerDialog endDatePickerDialog;
 
 
-		private Button finishButton;
-		
+		private boolean valid;		
 	
 		@Override
-		protected void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 			
-			setContentView(R.layout.activity_edit_claim);
+		setContentView(R.layout.activity_edit_claim);
 		
 		claim = ClaimManager.getInstance().extractClaim(savedInstanceState, getIntent());
 
 		findViewsByIds();
 		initViews();
 		setListeners();
-			
+	
+		validate();
 	}
 	
 	private void initViews() {
+		DateFormat formatter = DateFormat.getInstance();
 		
+		startDate.setText(formatter.format(claim.getStartCalendar().getTime()));
+		endDate.setText(formatter.format(claim.getEndCalendar().getTime()));
+		
+		descriptionEditText.setText(claim.getDescription());
+
 	}
-
-	@Override
-    protected void onResume() {
-		super.onResume();
-    }
-	
-
 
 	private void setListeners() {
 		
@@ -72,11 +71,7 @@ public class EditClaimActivity extends SerializingActivity {
 			public void onDateSet(DatePicker view, int year, int monthOfYear,
 					int dayOfMonth) {
 				
-				Calendar calendar = claim.getStartCalendar();
-				calendar.set(Calendar.YEAR, year);
-				calendar.set(Calendar.MONTH, monthOfYear);
-				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-				
+				startDate.setText(formatDate(year, monthOfYear, dayOfMonth));
 				
 				//TODO: also hacky
 				startDate.clearFocus();
@@ -93,14 +88,12 @@ public class EditClaimActivity extends SerializingActivity {
 			@Override
 			public void onDateSet(DatePicker view, int year, int monthOfYear,
 					int dayOfMonth) {
-				Calendar calendar = claim.getEndCalendar();
-				calendar.set(Calendar.YEAR, year);
-				calendar.set(Calendar.MONTH, monthOfYear);
-				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+				
+				endDate.setText(formatDate(year, monthOfYear, dayOfMonth));
 
 				//TODO: also hacky
 				endDate.clearFocus();
-				
+				validate();
 				
 			}
 			
@@ -117,6 +110,7 @@ public class EditClaimActivity extends SerializingActivity {
 					
 					startDatePickerDialog.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 					startDatePickerDialog.show();
+					validate();
 				}
 				
 			}
@@ -132,6 +126,7 @@ public class EditClaimActivity extends SerializingActivity {
 					
 					endDatePickerDialog.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 					endDatePickerDialog.show();
+					validate();
 				}
 				
 			}
@@ -140,19 +135,30 @@ public class EditClaimActivity extends SerializingActivity {
 		
 	}
 
-
+	private String formatDate(int year, int monthOfYear,
+			int dayOfMonth) {
+		Calendar calendar = claim.getStartCalendar();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, monthOfYear);
+		calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+		
+		return DateFormat.getInstance().format(calendar.getTime());
+	}
 
 	private void findViewsByIds() {
 		descriptionEditText = (EditText) findViewById(R.id.edit_claim_description);
 		startDate = (EditText) findViewById(R.id.edit_claim_start_date);
 		endDate = (EditText) findViewById(R.id.edit_claim_end_date);
-		finishButton = (Button) findViewById(R.id.action_finish_edit_claim);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.edit_claim, menu);
+		getMenuInflater().inflate(R.menu.edit_claim, menu);		
+		
+		menu.findItem(R.id.action_finish_edit_claim).setVisible(valid);
+
+		
 		return true;
 	}
 
@@ -178,7 +184,13 @@ public class EditClaimActivity extends SerializingActivity {
 			claim.setEndCalendar(extractDateFromEditText(endDate));
 			claim.setStartCalendar(extractDateFromEditText(startDate));
 			
-		}		
+						
+			finish();
+			
+		} else {
+			Toast toast = Toast.makeText(this, "yoooo", Toast.LENGTH_SHORT);
+			toast.show();
+		}
 	}
 
 	private Calendar extractDateFromEditText(EditText editText) {
@@ -196,7 +208,7 @@ public class EditClaimActivity extends SerializingActivity {
 	}
 
 	private boolean validate() {
-		boolean valid = true;
+		valid = true;
 		
 		if(descriptionEditText.getText().toString().isEmpty()) {
 			descriptionEditText.setError("Description cannot be empty!");
@@ -204,13 +216,9 @@ public class EditClaimActivity extends SerializingActivity {
 		}
 
 		if(claim.isDateRangeValid(extractDateFromEditText(startDate), extractDateFromEditText(endDate))) {
+			//TODO: set error text etc.
 			
-		}
-				
-		if(!valid) {
-			finishButton.setVisibility(View.GONE);
-		} else {
-			finishButton.setVisibility(View.VISIBLE);	
+			valid = false;
 		}
 		
 		invalidateOptionsMenu();
