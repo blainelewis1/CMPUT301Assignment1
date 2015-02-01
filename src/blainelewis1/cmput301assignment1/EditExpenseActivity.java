@@ -21,12 +21,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class ExpenseActivity extends Activity {
+public class EditExpenseActivity extends Activity {
 	
 	//TODO: what if back on a new claim, maybe pass flag in intent, because it needs to be deleted
 	//TODO: clicking back is going back for some reason....
-	//TODO: should the descriptions really be multiline... 
-	//TODO: move validation to while typing? Hmmm maybe I need to test with onescreen keyboard
 	private Expense expense;
 	
 	private Claim claim;

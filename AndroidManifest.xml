@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ExpenseActivity"
+            android:name=".EditExpenseActivity"
             android:label="@string/title_activity_expense"
             android:parentActivityName=".ListClaimsActivity" >
             <meta-data
@@ -30,7 +30,7 @@
                 android:value="blainelewis1.cmput301assignment1.ListClaims" />
         </activity>
         <activity
-            android:name=".ClaimActivity"
+            android:name=".ViewClaimActivity"
             android:label="@string/title_activity_claim"
             android:parentActivityName=".ListClaimsActivity" >
             <meta-data

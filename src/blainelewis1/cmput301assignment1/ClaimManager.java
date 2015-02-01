@@ -5,8 +5,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import android.content.Context;
 import android.content.Intent;
@@ -40,19 +38,6 @@ public class ClaimManager {
 
 	public void addClaim(Claim claim) {
 		claims.add(claim);
-	}
-
-	public ArrayList<Claim> getClaimsSortedByStartDate() {
-
-		Collections.sort(claims, new Comparator<Claim>() {
-			@Override
-			public int compare(Claim claim1, Claim claim2) {
-				return claim1.getStartCalendar().compareTo(
-						claim2.getStartCalendar());
-			}
-		});
-
-		return claims;
 	}
 
 	public Claim createNewClaim() {
@@ -177,7 +162,7 @@ public class ClaimManager {
 	public Intent getEditExpenseIntent(Context context, Claim claim,
 			Expense expense) {
 
-		Intent intent = new Intent(context, ExpenseActivity.class);
+		Intent intent = new Intent(context, EditExpenseActivity.class);
 
 		intent.putExtra(EXPENSE_ID_STRING, expense.getId());
 		intent.putExtra(CLAIM_ID_STRING, claim.getId());
@@ -200,7 +185,7 @@ public class ClaimManager {
 
 	public Intent getViewClaimIntent(Context context,
 			Claim claim) {
-		Intent intent = new Intent(context, ClaimActivity.class);
+		Intent intent = new Intent(context, ViewClaimActivity.class);
 
 		intent.putExtra(CLAIM_ID_STRING, claim.getId());
 		return intent;

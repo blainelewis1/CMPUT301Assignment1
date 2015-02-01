@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import blainelewis1.cmput301assignment1.Claim.Status;
 
-public class ClaimActivity extends Activity {
+public class ViewClaimActivity extends Activity {
 	
 	private Claim claim;
 	
@@ -55,16 +55,16 @@ public class ClaimActivity extends Activity {
 			@Override
 	        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 	        	
-				if(ClaimActivity.this.claim.isEditable()) {
-		            Intent intent = new Intent(ClaimActivity.this, ExpenseActivity.class);
+				if(ViewClaimActivity.this.claim.isEditable()) {
+		            Intent intent = new Intent(ViewClaimActivity.this, EditExpenseActivity.class);
 		            
 		        	Expense expense = (Expense) parent.getItemAtPosition(position);
-		            intent.putExtra("CLAIM_ID", ClaimActivity.this.claim.getId());
+		            intent.putExtra("CLAIM_ID", ViewClaimActivity.this.claim.getId());
 		            intent.putExtra("EXPENSE_ID", expense.getId());
 		            
 		            startActivity(intent);
 				} else {
-					Toast toast = Toast.makeText(ClaimActivity.this, "Claim isn't editable while awaiting approval.", Toast.LENGTH_SHORT);
+					Toast toast = Toast.makeText(ViewClaimActivity.this, "Claim isn't editable while awaiting approval.", Toast.LENGTH_SHORT);
 					toast.show();
 				}
 	        }

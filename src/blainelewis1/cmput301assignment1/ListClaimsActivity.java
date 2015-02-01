@@ -1,7 +1,5 @@
 package blainelewis1.cmput301assignment1;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 import android.app.Activity;
@@ -11,17 +9,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class ListClaimsActivity extends Activity {
 	
 	//TODO: claims and expenses with long descriptions look ugly, make them wrap or end in ellipse or something
+	//TODO: just make everything look nicer in general
 	
 	private ListView claimsListView;
 	private ClaimAdapter claimsListAdapter;
-	private ArrayList<Claim> claims;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +51,16 @@ public class ListClaimsActivity extends Activity {
 
 	private void initViews() {
 		ClaimManager claimManager = ClaimManager.getInstance();
-		
-		//TODO: this is super duper ugly
-		ArrayList<Claim> claims = claimManager.getClaims();
-		claimsListAdapter = new ClaimAdapter(this, R.layout.claim_layout, claims);
+		claimsListAdapter = new ClaimAdapter(this, R.layout.claim_layout, claimManager.getClaims());
 		claimsListView.setAdapter(claimsListAdapter);
+		
+		claimsListAdapter.sort(new Comparator<Claim>() {
+			@Override
+			public int compare(Claim claim1, Claim claim2) {
+				return claim1.getStartCalendar().compareTo(
+						claim2.getStartCalendar());
+			}
+		});
 		
 		if(claimsListAdapter.isEmpty()) {
 			Toast toast = Toast.makeText(this, "Click + to add a claim!", Toast.LENGTH_LONG);
@@ -100,16 +103,6 @@ public class ListClaimsActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 		
-		//Force the list to resort......
-		Collections.sort(claims, new Comparator<Claim>() {
-			@Override
-			public int compare(Claim claim1, Claim claim2) {
-				return claim1.getStartCalendar().compareTo(
-						claim2.getStartCalendar());
-			}
-		});
-
-				
 		claimsListAdapter.notifyDataSetChanged();
 	}
 }
