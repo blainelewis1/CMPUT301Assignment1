@@ -45,7 +45,7 @@ public class EditExpenseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_expense);
+		setContentView(R.layout.activity_edit_expense);
 		
 		claim = ClaimManager.getInstance().extractClaim(savedInstanceState, getIntent());
 		expense = ClaimManager.getInstance().extractExpense(savedInstanceState, getIntent(), claim);

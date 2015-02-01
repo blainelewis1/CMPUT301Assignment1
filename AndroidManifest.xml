@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".ListClaimsActivity"
-            android:label="@string/title_activity_list_claims" >
+            android:label="@string/app_title"
+            android:title="@string/title_activity_list_claims">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

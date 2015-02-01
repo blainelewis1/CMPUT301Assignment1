@@ -1,7 +1,5 @@
 package blainelewis1.cmput301assignment1;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,7 +26,7 @@ public class ViewClaimActivity extends Activity {
 
 	private TextView descriptionTextView;
 	private TextView datesTextView;
-	private ListView claimTotalList;
+	//private ListView claimTotalList;
 	private TextView statusTextView;
 	private ListView expensesList;
 
@@ -38,11 +35,10 @@ public class ViewClaimActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_claim);
+		setContentView(R.layout.activity_view_claim);
 		
 		claim = ClaimManager.getInstance().extractClaim(savedInstanceState, getIntent());
 
-		
 		findViewsByIds();
 		initViews();
 		setListeners();
@@ -86,8 +82,6 @@ public class ViewClaimActivity extends Activity {
 	}
 	
 	private void update() {
-		//TODO: remove me...
-		
 		setTitle(claim.getDescription());
 		
 		descriptionTextView.setText(claim.getDescription());
@@ -96,9 +90,9 @@ public class ViewClaimActivity extends Activity {
 		datesTextView.setText(claim.getFormattedDateRange());
 		statusTextView.setText(claim.getStatusString());
 		
-		ArrayList<String> amounts = claim.getTotalsAsStrings();
+		//ArrayList<String> amounts = claim.getTotalsAsStrings();
 		
-		claimTotalList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, amounts));
+		//claimTotalList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, amounts));
 		
 		expensesAdapter.notifyDataSetChanged();
 				
@@ -174,9 +168,9 @@ public class ViewClaimActivity extends Activity {
 		approveClaim = (Button) findViewById(R.id.approveClaim);
 		returnClaim = (Button) findViewById(R.id.returnClaim);
 		
-		descriptionTextView = (TextView) findViewById(R.id.claimDescription);
+		descriptionTextView = (TextView) findViewById(R.id.claim_description);
 		datesTextView = (TextView) findViewById(R.id.claim_dates);
-		claimTotalList = (ListView) findViewById(R.id.totalCostsList);
+		//claimTotalList = (ListView) findViewById(R.id.totalCostsList);
 		statusTextView = (TextView) findViewById(R.id.claimStatus);
 		expensesList = (ListView) findViewById(R.id.claim_expense_list);
 		

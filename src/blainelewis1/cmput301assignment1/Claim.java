@@ -3,6 +3,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -154,8 +155,7 @@ public class Claim {
 		ArrayList<String> totalStrings = new ArrayList<String>();
 		
 		for(Entry<String, BigDecimal> total : totals.entrySet()) {
-			totalStrings.add(total.getKey() + 
-							String.valueOf(total.getValue()));
+			totalStrings.add(Expense.getReadableCurrency(total.getValue(), Currency.getInstance(total.getKey())));
 		}
 		
 		
@@ -194,14 +194,12 @@ public class Claim {
 		sb.append("<h1>").append(description).append("</h1>")
 		.append("<h3>").append(getFormattedDateRange()).append("</h3>")
 		.append("<h3>").append(getStatusString()).append("</h3>");
-		//.append("<table>");
 		
 		for(Expense expense : expenses) {
-			sb.append(expense.getHTMLRepresentation());
+			sb.append("<hr />").
+			append(expense.getHTMLRepresentation());
 		}
-		
-		//sb.append("</table>");
-		
+				
 		return sb.toString();
 	}
 

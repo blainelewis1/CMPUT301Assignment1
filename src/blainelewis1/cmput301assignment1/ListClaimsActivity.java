@@ -71,7 +71,7 @@ public class ListClaimsActivity extends Activity {
 
 
 	private void findViewsByIds() {
-		claimsListView = (ListView)findViewById(R.id.claimsList);
+		claimsListView = (ListView)findViewById(R.id.list_claims_list);
 	}
 
 	@Override

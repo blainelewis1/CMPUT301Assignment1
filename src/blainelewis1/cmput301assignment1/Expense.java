@@ -130,12 +130,15 @@ public class Expense {
 	}
 
 	public String getReadableAmount() {
+		return getReadableCurrency(amount, currency); 
+		
+	}
+	public static String getReadableCurrency(BigDecimal amount, Currency currency) {
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		formatter.setCurrency(currency);
 		formatter.setMaximumFractionDigits(currency.getDefaultFractionDigits());
 		formatter.setMinimumFractionDigits(currency.getDefaultFractionDigits());
-		return /*currency.toString() +*/ formatter.format(amount);
-
+		return formatter.format(amount);
 	}
 	
 	public String getHTMLRepresentation() {

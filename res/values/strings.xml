@@ -23,5 +23,7 @@
     <string name="delete">Delete</string>
     <string name="date">Date</string>
     <string name="amount">Amount</string>
+    <string name="app_title">blaine1 Travel Expense Tracker</string>
+    <string name="progress">Progress</string>
 
 </resources>

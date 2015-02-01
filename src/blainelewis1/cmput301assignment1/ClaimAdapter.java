@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 
@@ -19,6 +20,7 @@ public class ClaimAdapter extends ArrayAdapter<Claim> {
 	private static class ViewHolder {
 		  TextView statusText;
 		  TextView descriptionText;
+		  ListView expenseTotals;
 	}
 	
 	
@@ -41,7 +43,8 @@ public class ClaimAdapter extends ArrayAdapter<Claim> {
 			
 			holder.statusText = (TextView) convertView.findViewById(R.id.claim_list_item_status);
 			holder.descriptionText = (TextView) convertView.findViewById(R.id.claim_list_item_description);
-	    
+			holder.expenseTotals = (ListView) convertView.findViewById(R.id.claim_list_expense_totals);
+			
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -51,6 +54,7 @@ public class ClaimAdapter extends ArrayAdapter<Claim> {
 		
 		holder.statusText.setText(claim.getStatusString());
 		holder.descriptionText.setText(claim.getDescription());
+		holder.expenseTotals.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, claim.getTotalsAsStrings()));
 		
 	    return convertView;
 	}
