@@ -1,3 +1,23 @@
+/*
+
+Copyright 2015 Blaine Lewis
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/
+
+
+
 package blainelewis1.cmput301assignment1;
 
 import java.util.Comparator;
@@ -13,10 +33,28 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+
+/*
+ * 
+ * This activity is the entry point to the entire application
+ * It handles initialization tasks such as deserialzation of the date 
+ * 
+ * It displays a list of claims which can be accessed by tapping on them
+ * Finally it provides an action bar button to allow creating a new claim
+ * 
+ */
+
+
 public class ListClaimsActivity extends Activity {
 	
 	private ListView claimsListView;
 	private ClaimAdapter claimsListAdapter;
+	
+	/*
+	 * Attach ids from components, apply listeners to various
+	 * views and initialize them with data
+	 * 
+	 */
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +68,9 @@ public class ListClaimsActivity extends Activity {
 		setListeners();
 	}
 
-
+	/*
+	 * Applies a listener to the listView which opens the viewclaim activity
+	 */
 	private void setListeners() {
 		claimsListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -46,7 +86,13 @@ public class ListClaimsActivity extends Activity {
 	}
 
 
+	/*
+	 * Attaches the claims to the claims list and a sort function
+	 * Displays a toast if the list is empty
+	 */
+	
 	private void initViews() {
+	
 		ClaimManager claimManager = ClaimManager.getInstance();
 		claimsListAdapter = new ClaimAdapter(this, R.layout.claim_layout, claimManager.getClaims());
 		claimsListView.setAdapter(claimsListAdapter);
@@ -66,6 +112,9 @@ public class ListClaimsActivity extends Activity {
 	
 	}
 
+	/* 
+	 * Find all views in this layout and attach their id
+	 */
 
 	private void findViewsByIds() {
 		claimsListView = (ListView)findViewById(R.id.list_claims_list);
@@ -78,6 +127,11 @@ public class ListClaimsActivity extends Activity {
 		return true;
 	}
 
+	/*
+	 * Handles clicking the plus button in the action bar by starting 
+	 * a new activity 
+	 */
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -87,15 +141,17 @@ public class ListClaimsActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
-		} else if (id == R.id.action_new_claim) {
-			
+		} else if (id == R.id.action_new_claim) {		
 			Intent intent = ClaimManager.getInstance().getCreateClaimIntent(this);
 			startActivity(intent);	 
 	    	
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
+	/*
+	 * We need to reset the listview data, just in case
+	 */
 	@Override 
 	public void onResume() {		
 		super.onResume();

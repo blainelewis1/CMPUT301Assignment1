@@ -1,3 +1,22 @@
+/*
+
+Copyright 2015 Blaine Lewis
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/
+
+
 package blainelewis1.cmput301assignment1;
 
 import java.math.BigDecimal;
@@ -21,9 +40,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+/*
+ * This activity uses 
+ */
+
 public class EditExpenseActivity extends Activity {
 	
-	//TODO: what if back on a new claim, maybe pass flag in intent, because it needs to be deleted
 	private Expense expense;
 	
 	private Claim claim;
@@ -156,16 +178,23 @@ public class EditExpenseActivity extends Activity {
 	private void initViews() {
 		Currency[] currencies = Currency.getAvailableCurrencies().toArray(new Currency[Currency.getAvailableCurrencies().size()]);
 		
+		
 		currencyAdapter = new ArrayAdapter<Currency>(this, 
 												android.R.layout.simple_spinner_item, 
 												currencies);
 		currencySpinner.setAdapter(currencyAdapter);
 		
+		currencySpinner.setSelection(currencyAdapter.getPosition(expense.getCurrency()));
+		
+	
+		String[] categories = Expense.categories.toArray(new String[Expense.categories.size()]);
+		
 		categoryAdapter = new ArrayAdapter<String>(this,
 													android.R.layout.simple_spinner_item,
-													Expense.categories.toArray(new String[Expense.categories.size()]));
+													categories);
 		
 		categorySpinner.setAdapter(categoryAdapter);
+		categorySpinner.setSelection(categoryAdapter.getPosition(expense.getCategory()));
 		
 		descriptionEditText.setText(expense.getDescription());
 		

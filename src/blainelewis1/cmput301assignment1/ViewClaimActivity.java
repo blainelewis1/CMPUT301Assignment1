@@ -60,7 +60,14 @@ public class ViewClaimActivity extends Activity {
 		            
 		            startActivity(intent);
 				} else {
-					Toast toast = Toast.makeText(ViewClaimActivity.this, "Claim isn't editable while awaiting approval.", Toast.LENGTH_SHORT);
+					String addin = "";
+					if(claim.getStatus() == Status.APPROVED){
+						addin = "after";
+					} else {
+						addin = "while awaiting";
+					}
+					
+					Toast toast = Toast.makeText(ViewClaimActivity.this, "Expenses aren't editable " + addin + " approval.", Toast.LENGTH_SHORT);
 					toast.show();
 				}
 	        }
@@ -114,8 +121,8 @@ public class ViewClaimActivity extends Activity {
 		getMenuInflater().inflate(R.menu.claim, menu);
 		
 		
-		menu.findItem(R.id.action_edit_claim).setVisible(claim.isEditable());
-		menu.findItem(R.id.action_add_expense).setVisible(claim.isEditable());
+		//menu.findItem(R.id.action_edit_claim).setVisible(claim.isEditable());
+		//menu.findItem(R.id.action_add_expense).setVisible(claim.isEditable());
 		
 		return true;
 	}
@@ -229,13 +236,25 @@ public class ViewClaimActivity extends Activity {
 		update();		
 	}
 	
-	private void editClaim() {		
-		//Pass the intent		
-		Intent intent = ClaimManager.getInstance().getEditClaimIntent(this, claim);
+	private void editClaim() {	
+		if(claim.isEditable()) {
+			//Pass the intent		
+			Intent intent = ClaimManager.getInstance().getEditClaimIntent(this, claim);
+			
+			intent.putExtra("CLAIM_ID", claim.getId());
+			
+	    	startActivity(intent);	 
+		} else {
+			String addin = "";
+			if(claim.getStatus() == Status.APPROVED){
+				addin = "after";
+			} else {
+				addin = "while awaiting";
+			}
 		
-		intent.putExtra("CLAIM_ID", claim.getId());
-		
-    	startActivity(intent);	 
+			Toast toast = Toast.makeText(ViewClaimActivity.this, "Claims aren't editable " + addin + " approval.", Toast.LENGTH_SHORT);
+			toast.show();
+		}
 	}
 	
 	public void createExpense() {
