@@ -1,4 +1,4 @@
-package models;
+package blainelewis1.cmput301assignment1;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class Claim {
 	 * 
 	*/
 	
-	public enum Status {IN_PROGRESS, SUBMITTED, RETURNED, APPROVED};
+	enum Status {IN_PROGRESS, SUBMITTED, RETURNED, APPROVED};
 		
 	private Calendar startCalendar;
 	private Calendar endCalendar;
