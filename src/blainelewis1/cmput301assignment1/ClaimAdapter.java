@@ -63,7 +63,7 @@ public class ClaimAdapter extends ArrayAdapter<Claim> {
 		
 		if(convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflater.inflate(R.layout.claim_layout, parent, false);
+			convertView = inflater.inflate(R.layout.claim_layout, parent	, false);
 			
 			holder = new ViewHolder();
 			
