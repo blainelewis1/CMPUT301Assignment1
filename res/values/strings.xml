@@ -26,5 +26,6 @@
     <string name="app_title">blaine1 Travel Expense Tracker</string>
     <string name="progress">Progress</string>
     <string name="currencies">Currencies</string>
+    <string name="expense_totals">Expense Totals</string>
 
 </resources>

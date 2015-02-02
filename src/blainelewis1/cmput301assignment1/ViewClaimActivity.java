@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,6 +60,8 @@ public class ViewClaimActivity extends Activity {
 	private ListView expensesList;
 
 	private ExpenseAdapter expensesAdapter;
+
+	private TextView expenseTotals;
 	
 	/*
 	 * On creation we begin by loading the claim
@@ -147,6 +150,9 @@ public class ViewClaimActivity extends Activity {
 		statusTextView.setText(claim.getStatusString());
 			
 		
+		expenseTotals.setText(TextUtils.join("\n", claim.getTotalsAsStrings().toArray()));
+
+		
 		expensesAdapter.notifyDataSetChanged();
 				
 		toggleButtonVisibilities();
@@ -214,10 +220,9 @@ public class ViewClaimActivity extends Activity {
 		
 		descriptionTextView = (TextView) findViewById(R.id.claim_description);
 		datesTextView = (TextView) findViewById(R.id.claim_dates);
-		//claimTotalList = (ListView) findViewById(R.id.totalCostsList);
 		statusTextView = (TextView) findViewById(R.id.claimStatus);
 		expensesList = (ListView) findViewById(R.id.claim_expense_list);
-		
+		expenseTotals = (TextView) findViewById(R.id.claim_expense_totals);
 	}
 	
 	

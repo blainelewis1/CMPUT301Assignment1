@@ -30,6 +30,13 @@
            android:layout_height="wrap_content"
            android:ems="10"
            android:text="@string/claim_dates" />
+       
+       <TextView
+           android:id="@+id/claim_expense_totals"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:ems="10"
+           android:text="@string/expense_totals" />
 
        <View
 	    android:layout_width="fill_parent"
