@@ -76,11 +76,14 @@ public class EditClaimActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_edit_claim);
-
-		ClaimManager claimManager = ClaimManager.getInstance();
-
-		claim = claimManager.extractClaim(savedInstanceState, getIntent());
-		isNew = claimManager.extractIsNew(savedInstanceState, getIntent());
+		
+		claim = ActivityCommunicationUtils.extractClaim(savedInstanceState, getIntent());
+		isNew = ActivityCommunicationUtils.extractIsNew(savedInstanceState, getIntent());
+		
+		//An unexpected error occurred, exit quietly
+		if(claim == null) {
+			finish();
+		}
 
 		if(isNew) {
 			setTitle("New Claim");
@@ -99,10 +102,10 @@ public class EditClaimActivity extends Activity {
 	
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 
-		savedInstanceState.putString(ClaimManager.CLAIM_ID_STRING, claim.getId());
+		savedInstanceState.putString(ActivityCommunicationUtils.CLAIM_ID_STRING, claim.getId());
 		
 		if(isNew) {
-			savedInstanceState.putBoolean(ClaimManager.IS_NEW, isNew);
+			savedInstanceState.putBoolean(ActivityCommunicationUtils.IS_NEW, isNew);
 		}
 		
 	    // Always call the superclass so it can save the view hierarchy state
@@ -285,7 +288,7 @@ public class EditClaimActivity extends Activity {
 			finish();
 
 			if (isNew) {
-				startActivity(claimManager.getViewClaimIntent(this, claim));
+				startActivity(ActivityCommunicationUtils.getViewClaimIntent(this, claim));
 			}
 
 		}

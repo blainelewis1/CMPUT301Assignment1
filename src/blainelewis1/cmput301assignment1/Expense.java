@@ -11,11 +11,20 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
+/*
+ * This class is a model for an expense. 
+ * It ensures data consistency as well as providing helper methods for 
+ * displaying it's fields correctly and with proper localization
+ * 
+ * 
+ * Every expense has a unique id for easy transfer between activities
+ */
+
 
 public class Expense {
 
 	/*
-	 * 
+	 * From assignment spec: 
 	 * An expense item has a:
 	 * calendar, 
 	 * category (e.g., air fare, ground transport, vehicle rental, fuel, parking, registration, accommodation, meal), 
@@ -27,9 +36,16 @@ public class Expense {
 	private Calendar calendar;
 	private String category;
 	private String description;
+	
+	//We use BigDecimal to avoid floating point errors.
+	
 	private BigDecimal amount;
 	private Currency currency;
 	private String id;
+	
+	//This set allows us fast checks when testing if a category is valid
+	//The syntax is slightly confusing, but essentially we extend a set and \
+	//then we call add multiple times on it in the default constructor
 	
 	public static final Set<String> categories = Collections.unmodifiableSet(
 			new HashSet<String>()
@@ -49,7 +65,9 @@ public class Expense {
 		);
 	
 	
-
+	/*
+	 * Simple constructor, simply takes a bunch of arguments and applies them
+	 */
 	
 	public Expense  (Calendar calendar, String category, String description, BigDecimal amount, Currency currency) {
 		id = UUID.randomUUID().toString();
@@ -62,6 +80,10 @@ public class Expense {
 		
 	}
 
+	/*
+	 * This constructor allows us to easily create an expense with default values
+	 */
+	
 	public Expense(Claim claim) {
 		this(claim.getStartCalendar(), "meal", "", new BigDecimal("0.00"), Currency.getInstance(Locale.getDefault()));
 	}
@@ -69,7 +91,7 @@ public class Expense {
 	public Calendar getCalendar() {
 		return calendar;
 	}
-
+	
 	public void setCalendar(Calendar calendar) {
 		if(calendar == null) {
 			throw new IllegalArgumentException("Calendar cannot be null!");
@@ -87,6 +109,7 @@ public class Expense {
 			throw new IllegalArgumentException("Category cannot be null!");
 		}
 		
+		//Check that the category is in our set
 		if(!categories.contains(category)) {
 			throw new IllegalArgumentException("Invalid Category!");
 		}
@@ -102,6 +125,8 @@ public class Expense {
 		if(description == null || description == "") {
 			throw new IllegalArgumentException("Description cannot be empty!");
 		}
+		
+		//Automatically trims the description of trailing and leading whitespace
 		
 		this.description = description.trim();
 	}
@@ -134,21 +159,31 @@ public class Expense {
 		return getReadableCurrency(amount, currency); 
 		
 	}
+	
+	/*
+	 * This function applies localization to our currency by properly formatting the amount
+	 * As well as putting the common symbol and or ISO code in front of the amount
+	 */
+	
 	public static String getReadableCurrency(BigDecimal amount, Currency currency) {
-		//NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
-		//formatter.setCurrency(currency);
-		//formatter.setMaximumFractionDigits(currency.getDefaultFractionDigits());
-		//formatter.setMinimumFractionDigits(currency.getDefaultFractionDigits());
+
+		//http://stackoverflow.com/a/2057163/1036813 2015-02-01 Blaine Lewis
 		
-		DecimalFormat formatter = (DecimalFormat)NumberFormat.getCurrencyInstance();
+		//I had to use this solution because currency formats default to using parantheses for negative values
+		// I Want $-20 I got ($20) without using setNegative****
+		
+		DecimalFormat formatter = (DecimalFormat) NumberFormat.getCurrencyInstance();
 		formatter.setCurrency(currency);
 		String symbol = formatter.getCurrency().getSymbol();
-		formatter.setNegativePrefix(symbol+"-"); // or "-"+symbol if that's what you need
+		formatter.setNegativePrefix(symbol+"-");
 		formatter.setNegativeSuffix("");
 		
 		return formatter.format(amount);
 	}
 	
+	/*
+	 * Returns the expense as formatted HTML 
+	 */
 	public String getHTMLRepresentation() {
 		StringBuilder sb = new StringBuilder();
 		

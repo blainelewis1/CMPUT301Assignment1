@@ -78,7 +78,7 @@ public class ListClaimsActivity extends Activity {
                     long id) {
             	
             	Claim claim = (Claim) parent.getItemAtPosition(position);
-                Intent intent = ClaimManager.getInstance().getViewClaimIntent(ListClaimsActivity.this, claim);
+                Intent intent = ActivityCommunicationUtils.getViewClaimIntent(ListClaimsActivity.this, claim);
 
                 startActivity(intent);
             }
@@ -142,7 +142,7 @@ public class ListClaimsActivity extends Activity {
 		if (id == R.id.action_settings) {
 			return true;
 		} else if (id == R.id.action_new_claim) {		
-			Intent intent = ClaimManager.getInstance().getCreateClaimIntent(this);
+			Intent intent = ActivityCommunicationUtils.getCreateClaimIntent(this);
 			startActivity(intent);	 
 	    	
 		}

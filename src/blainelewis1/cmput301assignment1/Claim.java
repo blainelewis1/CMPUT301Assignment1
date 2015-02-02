@@ -9,6 +9,13 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 
+/*
+ * This is a model for representing a claim, it also provides methods for nice representation of it
+ * 
+ * A claim is not modifiable if it's status is SUBMITTED or APPROVED and will throw an exception if you attemot to change it
+ * 
+ */
+
 public class Claim {
 
 	/*
@@ -22,12 +29,10 @@ public class Claim {
 		
 	private Calendar startCalendar;
 	private Calendar endCalendar;
-	String description;
+	private String description;
 	private Status status;
-
 	private String id;
-	
-	ArrayList<Expense> expenses;
+	private ArrayList<Expense> expenses;
 	
 	public Claim(Calendar startCalendar, Calendar endCalendar, String description){
 		status = Status.IN_PROGRESS;
@@ -39,6 +44,10 @@ public class Claim {
 		
 		expenses = new ArrayList<Expense>();
 	}
+	
+	/*
+	 * Constructor to make creating default claims easy
+	 */
 	
 	public Claim() {
 		this(Calendar.getInstance(), Calendar.getInstance(), "");
@@ -55,6 +64,14 @@ public class Claim {
 		
 		expenses.add(expense);
 	}
+
+	public void deleteExpense(Expense expense) {
+		if(!this.isEditable()){
+			throw new IllegalStateException("Claim is not in an editable state.");
+		}
+		
+		expenses.remove(expense);
+	}
 	
 	public void removeExpense(Expense expense) {
 		if(!this.isEditable()){
@@ -67,6 +84,11 @@ public class Claim {
 	public Calendar getStartCalendar() {
 		return startCalendar;
 	}
+
+	/*
+	 * End calendar and start calendar are set at the same time because they represent a range, and 
+	 * one is not valid without the other
+	 */
 
 	public void setDateRange(Calendar startCalendar, Calendar endCalendar) {
 		if(startCalendar == null) {
@@ -138,6 +160,10 @@ public class Claim {
 		return this.id;
 	}
 
+	/*
+	 * Returns a list of the totals of all expenses, formatted and localized.
+	 */
+	
 	public ArrayList<String> getTotalsAsStrings() {
 		HashMap<String, BigDecimal> totals = new HashMap<String, BigDecimal>();
 		
@@ -167,7 +193,11 @@ public class Claim {
 		return expenses;
 	}
 
-	public Expense getExpenseByID(String expenseId) {
+	/*
+	 * Searches it's expenses for an expense with that id
+	 */
+	
+	public Expense getExpenseById(String expenseId) {
 		
 		for (Expense expense : expenses) {
 			if(expense.getId().equals(expenseId)) {
@@ -177,17 +207,21 @@ public class Claim {
 		
 		return null;	
 	}
-
-	public void deleteExpense(Expense expense) {
-		expenses.remove(expense);
-	}
+	
+	/*
+	 * Returns the date range localized 
+	 */
 	
 	public String getFormattedDateRange() {
 		DateFormat formatter = DateFormat.getDateInstance();
 
 		return formatter.format(startCalendar.getTime()) + " - " + formatter.format(endCalendar.getTime());
 	}
-
+	
+	/*
+	 * Displays this claim and it's expenses as HTML
+	 */
+	
 	public String getHTMLRepresentation() {		
 		
 		StringBuilder sb = new StringBuilder();
@@ -203,6 +237,10 @@ public class Claim {
 		return sb.toString();
 	}
 
+	/*
+	 * Tests if the date range is valid
+	 */
+	
 	public boolean isDateRangeValid(Calendar startCalendar,
 			Calendar endCalendar) {
 		return startCalendar.compareTo(endCalendar) <= 0 && endCalendar.compareTo(startCalendar) >= 0;

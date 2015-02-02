@@ -10,8 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-
-
+/*
+ * Simple adapter that applies a custom layout for displaying claims
+ */
 
 public class ClaimAdapter extends ArrayAdapter<Claim> {
 
@@ -31,6 +32,10 @@ public class ClaimAdapter extends ArrayAdapter<Claim> {
 	
 
 
+	/*
+	 * Inflates the layout and applies all the claim's fields to it 
+	*/
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {		
 		ViewHolder holder;

@@ -16,6 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import blainelewis1.cmput301assignment1.Claim.Status;
 
+/*
+ * This activity acts to display a claim as well as provides 
+ * a starting point to edit it or add expenses to it.
+ * 
+ * 
+ */
+
 public class ViewClaimActivity extends Activity {
 	
 	private Claim claim;
@@ -31,21 +38,37 @@ public class ViewClaimActivity extends Activity {
 
 	private ExpenseAdapter expensesAdapter;
 	
+	/*
+	 * On creation we begin by loading the claim
+	 * Then we attach all views by their ids
+	 * Initialize them 
+	 * and apply listeners to them
+	 */
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_claim);
 		
-		claim = ClaimManager.getInstance().extractClaim(savedInstanceState, getIntent());
+		claim = ActivityCommunicationUtils.extractClaim(savedInstanceState, getIntent());
+		
+		//An unexpected error occurred, exit quietly
+		if(claim == null) {
+			finish();
+		}
 
 		findViewsByIds();
 		initViews();
 		setListeners();
-		update();
 	}
+	
+	/*
+	 * Set a listener to the expenses list 
+	 */
 	
 	private void setListeners() {
 		
+		//Clicking on an expense should go to the edit expense, unless the claim isn't in an editable state
 		expensesList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 	        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -73,12 +96,14 @@ public class ViewClaimActivity extends Activity {
 		});
 	}
 
+	/*
+	 * Initialize the expenses adapter, toast if it is empty
+	 */
+	
 	private void initViews() {
 		expensesAdapter = new ExpenseAdapter(this, R.layout.expenses_layout, claim.getExpenses());
 		
 		expensesList.setAdapter(expensesAdapter);
-		
-		
 		
 		if(expensesAdapter.isEmpty()) {
 			Toast toast = Toast.makeText(this, "Click + to add an expense to this claim!", Toast.LENGTH_LONG);
@@ -87,7 +112,10 @@ public class ViewClaimActivity extends Activity {
 
 	}
 	
-	private void update() {
+	/*
+	 * Fill al fields from the claim model
+	 */
+	private void updateFieldsFromClaim() {
 		setTitle(claim.getDescription());
 		
 		descriptionTextView.setText(claim.getDescription());
@@ -95,36 +123,29 @@ public class ViewClaimActivity extends Activity {
 		
 		datesTextView.setText(claim.getFormattedDateRange());
 		statusTextView.setText(claim.getStatusString());
-		
-		//ArrayList<String> amounts = claim.getTotalsAsStrings();
-		
-		//claimTotalList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, amounts));
+			
 		
 		expensesAdapter.notifyDataSetChanged();
 				
-		invalidateOptionsMenu();
 		toggleButtonVisibilities();
 		
 	}
 	
+	/*
+	 * In case the claim was changed or expenses were, then we should
+	 * update the fields
+	 */
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		update();
+		updateFieldsFromClaim();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.claim, menu);
-		
-		
-		//menu.findItem(R.id.action_edit_claim).setVisible(claim.isEditable());
-		//menu.findItem(R.id.action_add_expense).setVisible(claim.isEditable());
-		
-		return true;
-	}
+	
+	
+	
+
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -181,6 +202,10 @@ public class ViewClaimActivity extends Activity {
 		
 	}
 	
+	
+	/*
+	 * Chooses what buttons to show depending on the status of the claim
+	 */
 	private void toggleButtonVisibilities(){
 
 		switch (claim.getStatus()){
@@ -210,13 +235,21 @@ public class ViewClaimActivity extends Activity {
 		
 	}
 	
+	/*
+	 * On click listener for the approve button, sets as approved and serializes
+	 */
+	
 	public void setClaimApproved(View view) {
 		claim.setStatus(Status.APPROVED);
 
 		ClaimManager.getInstance().serialize(this);
 		
-		update();
+		updateFieldsFromClaim();
 	}	
+	
+	/*
+	 * On click listener for the return button, sets as returned and serializes
+	 */
 	
 	public void setClaimReturned(View view) {
 		claim.setStatus(Status.RETURNED);
@@ -224,25 +257,33 @@ public class ViewClaimActivity extends Activity {
 		ClaimManager.getInstance().serialize(this);
 
 		
-		update();
+		updateFieldsFromClaim();
 	}	
+	
+	/*
+	 * On click listener for the submit button, sets as submitted and serializes
+	 */
 	
 	public void setClaimSubmitted(View view) {
 		claim.setStatus(Status.SUBMITTED);
 		
 		ClaimManager.getInstance().serialize(this);
 
-		update();		
+		updateFieldsFromClaim();		
 	}
+	
+	/*
+	 * If the claim is in an editable state, launches an EditClaimActivity in order
+	 * to edit this claim
+	 */
 	
 	private void editClaim() {	
 		if(claim.isEditable()) {
+			
 			//Pass the intent		
-			Intent intent = ClaimManager.getInstance().getEditClaimIntent(this, claim);
-			
-			intent.putExtra("CLAIM_ID", claim.getId());
-			
+			Intent intent = ActivityCommunicationUtils.getEditClaimIntent(this, claim);			
 	    	startActivity(intent);	 
+	    	
 		} else {
 			String addin = "";
 			if(claim.getStatus() == Status.APPROVED){
@@ -256,10 +297,23 @@ public class ViewClaimActivity extends Activity {
 		}
 	}
 	
+	/*
+	 * Creates an expense for this claim and launches the EditExpenseIntent
+	 */
+	
 	public void createExpense() {
 		
-		Intent createExpenseIntent = ClaimManager.getInstance().getCreateExpenseIntent(this, claim);
+		Intent createExpenseIntent = ActivityCommunicationUtils.getCreateExpenseIntent(this, claim);
 		startActivity(createExpenseIntent);
+	}
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.claim, menu);
+		
+		return true;
 	}
 
 }

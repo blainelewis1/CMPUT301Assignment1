@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+/*
+ * Simple adapter for showing claims, simply applies a custom layout to make them look nice
+ */
+
 public class ExpenseAdapter extends ArrayAdapter<Expense> implements
 		android.widget.ListAdapter {
 
@@ -27,6 +31,10 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> implements
 		this.context = context;
 	}
 
+	/*
+	 * Binds the expense fields to the layout to represent them. 
+	 */
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 			

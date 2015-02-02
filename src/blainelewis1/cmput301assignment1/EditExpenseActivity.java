@@ -82,12 +82,15 @@ public class EditExpenseActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_expense);
+				
+		claim = ActivityCommunicationUtils.extractClaim(savedInstanceState, getIntent());
+		expense = ActivityCommunicationUtils.extractExpense(savedInstanceState, getIntent(), claim);
+		isNew = ActivityCommunicationUtils.extractIsNew(savedInstanceState, getIntent());	
 		
-		ClaimManager claimManager = ClaimManager.getInstance();
-		
-		claim = claimManager.extractClaim(savedInstanceState, getIntent());
-		expense = claimManager.extractExpense(savedInstanceState, getIntent(), claim);
-		isNew = claimManager.extractIsNew(savedInstanceState, getIntent());	
+		//An unexpected error occurred, exit quietly
+		if(claim == null || expense == null) {
+			finish();
+		}
 		
 		if(isNew) {
 			setTitle("New Expense");
@@ -170,11 +173,11 @@ public class EditExpenseActivity extends Activity {
 	
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 
-		savedInstanceState.putString(ClaimManager.CLAIM_ID_STRING, claim.getId());
-		savedInstanceState.putString(ClaimManager.EXPENSE_ID_STRING, expense.getId());
+		savedInstanceState.putString(ActivityCommunicationUtils.CLAIM_ID_STRING, claim.getId());
+		savedInstanceState.putString(ActivityCommunicationUtils.EXPENSE_ID_STRING, expense.getId());
 		
 		if(isNew) {
-			savedInstanceState.putBoolean(ClaimManager.IS_NEW, isNew);
+			savedInstanceState.putBoolean(ActivityCommunicationUtils.IS_NEW, isNew);
 		}
 		
 	    // Always call the superclass so it can save the view hierarchy state
