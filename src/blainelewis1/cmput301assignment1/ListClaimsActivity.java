@@ -15,9 +15,6 @@ import android.widget.ListView;
 
 public class ListClaimsActivity extends Activity {
 	
-	//TODO: claims and expenses with long descriptions look ugly, make them wrap or end in ellipse or something
-	//TODO: just make everything look nicer in general
-	
 	private ListView claimsListView;
 	private ClaimAdapter claimsListAdapter;
 	
@@ -100,9 +97,9 @@ public class ListClaimsActivity extends Activity {
 	}
 	
 	@Override 
-	public void onResume() {
+	public void onResume() {		
 		super.onResume();
-		
+
 		claimsListAdapter.notifyDataSetChanged();
 	}
 }

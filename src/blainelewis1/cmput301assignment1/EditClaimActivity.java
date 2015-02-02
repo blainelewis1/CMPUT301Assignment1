@@ -39,7 +39,10 @@ public class EditClaimActivity extends Activity {
 		private boolean valid;
 
 
-		private LinearLayout layout;		
+		private LinearLayout layout;
+
+
+		private boolean isNew;		
 	
 		@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +50,24 @@ public class EditClaimActivity extends Activity {
 			
 		setContentView(R.layout.activity_edit_claim);
 		
-		claim = ClaimManager.getInstance().extractClaim(savedInstanceState, getIntent());
-
+		ClaimManager claimManager = ClaimManager.getInstance();
+		
+		claim = claimManager.extractClaim(savedInstanceState, getIntent());
+		isNew = claimManager.extractIsNew(savedInstanceState, getIntent());
+		
 		findViewsByIds();
 		initViews();
 		setListeners();
 	
 		validate();
+	}
+		
+	@Override
+	public void onBackPressed() {
+		if(isNew) {
+			ClaimManager.getInstance().deleteClaim(claim);
+		}
+		super.onBackPressed();
 	}
 	
 	private void initViews() {
@@ -191,6 +205,8 @@ public class EditClaimActivity extends Activity {
 			return true;
 		}  else if(id == R.id.action_finish_edit_claim) {
 			submitEdits();
+		} else if(id == android.R.id.home && isNew) {
+			ClaimManager.getInstance().deleteClaim(claim);
 		}
 		return super.onOptionsItemSelected(item);
 	}	

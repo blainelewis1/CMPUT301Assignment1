@@ -113,7 +113,6 @@ public class ViewClaimActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.claim, menu);
 		
-		//TODO: is having the buttons invisible a good idea? How will the user understand that this is possible?
 		
 		menu.findItem(R.id.action_edit_claim).setVisible(claim.isEditable());
 		menu.findItem(R.id.action_add_expense).setVisible(claim.isEditable());

@@ -24,7 +24,6 @@ import android.widget.Spinner;
 public class EditExpenseActivity extends Activity {
 	
 	//TODO: what if back on a new claim, maybe pass flag in intent, because it needs to be deleted
-	//TODO: clicking back is going back for some reason....
 	private Expense expense;
 	
 	private Claim claim;
@@ -40,6 +39,8 @@ public class EditExpenseActivity extends Activity {
 
 	private boolean valid;
 
+	private boolean isNew;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +48,11 @@ public class EditExpenseActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_expense);
 		
-		claim = ClaimManager.getInstance().extractClaim(savedInstanceState, getIntent());
-		expense = ClaimManager.getInstance().extractExpense(savedInstanceState, getIntent(), claim);
-
+		ClaimManager claimManager = ClaimManager.getInstance();
+		
+		claim = claimManager.extractClaim(savedInstanceState, getIntent());
+		expense = claimManager.extractExpense(savedInstanceState, getIntent(), claim);
+		isNew = claimManager.extractIsNew(savedInstanceState, getIntent());		
 		
 		findViewsByIds();
 		initViews();
@@ -122,6 +125,19 @@ public class EditExpenseActivity extends Activity {
 		});		
 	}
 	
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+
+		savedInstanceState.putString(ClaimManager.CLAIM_ID_STRING, claim.getId());
+		savedInstanceState.putString(ClaimManager.EXPENSE_ID_STRING, expense.getId());
+		
+		if(isNew) {
+			savedInstanceState.putBoolean(ClaimManager.IS_NEW, isNew);
+		}
+		
+	    // Always call the superclass so it can save the view hierarchy state
+	    super.onSaveInstanceState(savedInstanceState);
+	}
+	
 	private Calendar extractDate() {
 		
 		DateFormat formatter = DateFormat.getDateInstance();
@@ -192,10 +208,21 @@ public class EditExpenseActivity extends Activity {
 			deleteExpense();
 		} else if(id == R.id.action_finish_edit_expense) {
 			submitExpense();
+		} else if(id == android.R.id.home && isNew) {
+			claim.deleteExpense(expense);
 		}
 		
 		
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if(isNew) {
+			claim.deleteExpense(expense);
+		}
+		
+		super.onBackPressed();
 	}
 	
 	public void submitExpense() {		

@@ -20,9 +20,11 @@ public class ClaimManager {
 	
 	private static ClaimManager instance = null;
 	private static final String saveFileName = "claims.sav";
-	private static final String CLAIM_ID_STRING = "CLAIM_ID";
-	private static final String EXPENSE_ID_STRING = "EXPENSE_ID";
-
+	public static final String CLAIM_ID_STRING = "CLAIM_ID";
+	public static final String EXPENSE_ID_STRING = "EXPENSE_ID";
+	public static final String IS_NEW = "IS_NEW";
+	
+	
 	private ArrayList<Claim> claims;
 
 	protected ClaimManager() {
@@ -155,8 +157,10 @@ public class ClaimManager {
 	public Intent getCreateExpenseIntent(Context context, Claim claim) {
 
 		Expense expense = createNewExpense(claim);
-
-		return getEditExpenseIntent(context, claim, expense);
+		
+		Intent intent = getEditExpenseIntent(context, claim, expense);
+		intent.putExtra(IS_NEW, true);
+		return intent;
 	}
 
 	public Intent getEditExpenseIntent(Context context, Claim claim,
@@ -180,11 +184,14 @@ public class ClaimManager {
 	public Intent getCreateClaimIntent(Context context) {
 		Claim claim = createNewClaim();
 
-		return getEditClaimIntent(context, claim);
+		Intent intent = getEditClaimIntent(context, claim);
+		intent.putExtra(IS_NEW, true);
+		return intent;	
 	}
 
 	public Intent getViewClaimIntent(Context context,
 			Claim claim) {
+		
 		Intent intent = new Intent(context, ViewClaimActivity.class);
 
 		intent.putExtra(CLAIM_ID_STRING, claim.getId());
@@ -193,6 +200,14 @@ public class ClaimManager {
 
 	public ArrayList<Claim> getClaims() {
 		return claims;
+	}
+
+	public boolean extractIsNew(Bundle savedInstanceState, Intent intent) {
+		if(savedInstanceState != null) {
+			return savedInstanceState.getBoolean(ClaimManager.IS_NEW);
+		} else {
+			return intent.getBooleanExtra(ClaimManager.IS_NEW, false);
+		}
 	}
 
 }
