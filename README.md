@@ -12,6 +12,8 @@ My app is entirely localized, if you view with a french locale then your numbers
 
 My UML diagram is minimal because UML is intended as a quick overview of class relationships. If you need to find inner workings of classes then you should be reading documentation not looking at models. The notes complicate the diagram, but the assignment spec indicated I should have them.
 
+Ideally I would have separate packages for different things eg. models, activities, util but when I tried doing that Eclipse corrupted my manifest file and it was taking too long to fix so I reverted
+
 #Citations
 
 http://stackoverflow.com/a/2057163/1036813 02-02-2015 Blaine Lewis
