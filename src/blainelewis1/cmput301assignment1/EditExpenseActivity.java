@@ -39,9 +39,10 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 /*
- * This activity uses 
+ * This activity handles creation of new expenses and editting old ones
  */
 
 public class EditExpenseActivity extends Activity {
@@ -59,7 +60,6 @@ public class EditExpenseActivity extends Activity {
 	private ArrayAdapter<String> categoryAdapter;
 	private ArrayAdapter<Currency> currencyAdapter;
 
-	private boolean valid;
 
 	private boolean isNew;
 
@@ -74,7 +74,11 @@ public class EditExpenseActivity extends Activity {
 		
 		claim = claimManager.extractClaim(savedInstanceState, getIntent());
 		expense = claimManager.extractExpense(savedInstanceState, getIntent(), claim);
-		isNew = claimManager.extractIsNew(savedInstanceState, getIntent());		
+		isNew = claimManager.extractIsNew(savedInstanceState, getIntent());	
+		
+		if(isNew) {
+			setTitle("New Expense");
+		}
 		
 		findViewsByIds();
 		initViews();
@@ -95,6 +99,10 @@ public class EditExpenseActivity extends Activity {
 
 			@Override
 			public void afterTextChanged(Editable s) {
+				if(s.equals(descriptionEditText)) {
+					setTitle(descriptionEditText.getText());
+				}
+				
 				validate();
 			}
 			
@@ -219,8 +227,6 @@ public class EditExpenseActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.expense, menu);
-
-		menu.findItem(R.id.action_finish_edit_expense).setVisible(valid);
 		
 		return true;
 	}
@@ -257,7 +263,6 @@ public class EditExpenseActivity extends Activity {
 	public void submitExpense() {		
 		
 		if(validate()) {
-
 			
 			expense.setAmount(new BigDecimal(amountEditText.getText().toString()));
 			expense.setDescription(descriptionEditText.getText().toString());
@@ -273,25 +278,20 @@ public class EditExpenseActivity extends Activity {
 	}
 	
 	private boolean validate() {
-		valid = true;
+		boolean valid = true;
 		
 
 		if(descriptionEditText.getText().toString().isEmpty()){
 			
 			//TODO: this isn't entirely true....
 			//Make this a little bit more applicable
-			
-			setTitle("New Expense");
 
-			descriptionEditText.setError("Description cannot be empty!");
+			Toast toast = Toast.makeText(this, "Description cannot be empty", Toast.LENGTH_SHORT);
+			toast.show();
 			
 			valid = false;
 			
-		} else {
-			setTitle(descriptionEditText.getText().toString());
-		}
-		
-		invalidateOptionsMenu();
+		} 
 		
 		return valid;
 	}
