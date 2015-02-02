@@ -6,18 +6,23 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import android.content.Context;
+import android.content.Context;	
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class ClaimManager {
+/*
+ * This is a singleton that manages the list of claims by 
+ * providing means of (de) serialization and interfaces to get all of the claims
+ */
 
+public class ClaimManager {
 	
 	private static ClaimManager instance = null;
-	private static final String saveFileName = "claims.sav";
 	
+	//This is the name of the file we serialize to, it's arbitrary...
+	private static final String saveFileName = "claims.sav";
 	
 	private ArrayList<Claim> claims;
 
@@ -25,6 +30,10 @@ public class ClaimManager {
 
 	}
 
+	/*
+	 * Returns an instance of the claimManager
+	 */
+	
 	public static ClaimManager getInstance() {
 		if (instance == null) {
 			instance = new ClaimManager();
@@ -32,6 +41,10 @@ public class ClaimManager {
 		return instance;
 	}
 
+	/*
+	 * Adds a claim to the list
+	 */
+	
 	public void addClaim(Claim claim) {
 		claims.add(claim);
 	}
@@ -43,6 +56,10 @@ public class ClaimManager {
 
 		return claim;
 	}
+	
+	/*
+	 * Finds a claim by its id
+	 */
 
 	public Claim getClaimById(String id) {
 		for (Claim claim : claims) {
@@ -53,6 +70,11 @@ public class ClaimManager {
 
 		return null;
 	}
+	
+	/*
+	 * Creates an expense from it's claim. 
+	 * We manage expense creation to ensure it is done properly
+	 */
 
 	public Expense createNewExpense(Claim claim) {
 		Expense expense = new Expense(claim);
@@ -62,12 +84,22 @@ public class ClaimManager {
 		return expense;
 	}
 
+	/*
+	 * Deletes a claim
+	 */
+	
 	public void deleteClaim(Claim claim) {
 		claims.remove(claim);
 	}
 
+	/*
+	 * Serializes the claims as JSON using GSON 
+	 */
+	
 	public void serialize(Context context) {
 
+		
+		//Why write nothing?
 		if (this.claims == null) {
 			return;
 		}
@@ -89,9 +121,15 @@ public class ClaimManager {
 		}
 
 	}
+	
+	/*
+	 * Deserializes the claims that are stored as JSON using GSON 
+	 */
 
 	public void deserialize(Context context) {
 
+		
+		//Deserializing while we already have claims is dangerous and will overwrite data
 		if (this.claims != null) {
 			return;
 		}
@@ -102,6 +140,8 @@ public class ClaimManager {
 
 			InputStreamReader reader = new InputStreamReader(
 					context.openFileInput(saveFileName));
+
+			//https://sites.google.com/site/gson/gson-user-guide 02-02-2015
 
 			Type arrayListType = new TypeToken<ArrayList<Claim>>() {
 			}.getType();
@@ -115,13 +155,17 @@ public class ClaimManager {
 			Log.e("Error", "Deserialize failed", e);
 		}
 
+		//Either we failed to load the claims or there were none
+		
 		if (claims == null) {
 			claims = new ArrayList<Claim>();
 		}
 
 	}
 	
-	
+	/*
+	 * Returns all the claims
+	 */
 	public ArrayList<Claim> getClaims() {
 		return claims;
 	}
