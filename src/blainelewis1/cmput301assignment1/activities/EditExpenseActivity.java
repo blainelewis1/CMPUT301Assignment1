@@ -17,7 +17,7 @@ limitations under the License.
 */
 
 
-package blainelewis1.cmput301assignment1;
+package blainelewis1.cmput301assignment1.activities;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -26,6 +26,13 @@ import java.util.Calendar;
 import java.util.Currency;
 import java.util.Date;
 
+import models.Claim;
+import models.Expense;
+import blainelewis1.cmput301assignment1.ClaimManager;
+import blainelewis1.cmput301assignment1.R;
+import blainelewis1.cmput301assignment1.R.id;
+import blainelewis1.cmput301assignment1.R.layout;
+import blainelewis1.cmput301assignment1.R.menu;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;

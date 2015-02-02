@@ -2,6 +2,7 @@ package blainelewis1.cmput301assignment1;
 
 import java.util.List;
 
+import models.Claim;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;

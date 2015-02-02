@@ -6,10 +6,15 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import models.Claim;
+import models.Expense;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import blainelewis1.cmput301assignment1.activities.EditClaimActivity;
+import blainelewis1.cmput301assignment1.activities.EditExpenseActivity;
+import blainelewis1.cmput301assignment1.activities.ViewClaimActivity;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

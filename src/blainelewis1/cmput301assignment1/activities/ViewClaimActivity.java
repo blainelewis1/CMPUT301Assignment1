@@ -1,5 +1,8 @@
-package blainelewis1.cmput301assignment1;
+package blainelewis1.cmput301assignment1.activities;
 
+import models.Claim;
+import models.Claim.Status;
+import models.Expense;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,7 +17,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import blainelewis1.cmput301assignment1.Claim.Status;
+import blainelewis1.cmput301assignment1.ClaimManager;
+import blainelewis1.cmput301assignment1.ExpenseAdapter;
+import blainelewis1.cmput301assignment1.R;
 
 public class ViewClaimActivity extends Activity {
 	

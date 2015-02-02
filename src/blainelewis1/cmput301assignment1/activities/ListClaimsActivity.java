@@ -18,10 +18,17 @@ limitations under the License.
 
 
 
-package blainelewis1.cmput301assignment1;
+package blainelewis1.cmput301assignment1.activities;
 
 import java.util.Comparator;
 
+import models.Claim;
+import blainelewis1.cmput301assignment1.ClaimAdapter;
+import blainelewis1.cmput301assignment1.ClaimManager;
+import blainelewis1.cmput301assignment1.R;
+import blainelewis1.cmput301assignment1.R.id;
+import blainelewis1.cmput301assignment1.R.layout;
+import blainelewis1.cmput301assignment1.R.menu;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

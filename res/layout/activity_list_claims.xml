@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="blainelewis1.cmput301assignment1.ListClaimsActivity" >
+    tools:context="blainelewis1.cmput301assignment1.activities.ListClaimsActivity" >
 
     <ListView
         android:id="@+id/list_claims_list"

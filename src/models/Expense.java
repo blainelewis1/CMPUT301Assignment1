@@ -1,4 +1,4 @@
-package blainelewis1.cmput301assignment1;
+package models;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;

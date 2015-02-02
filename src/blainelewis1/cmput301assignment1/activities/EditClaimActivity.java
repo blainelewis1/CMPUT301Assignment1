@@ -16,13 +16,19 @@ limitations under the License.
 
  */
 
-package blainelewis1.cmput301assignment1;
+package blainelewis1.cmput301assignment1.activities;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
+import models.Claim;
+import blainelewis1.cmput301assignment1.ClaimManager;
+import blainelewis1.cmput301assignment1.R;
+import blainelewis1.cmput301assignment1.R.id;
+import blainelewis1.cmput301assignment1.R.layout;
+import blainelewis1.cmput301assignment1.R.menu;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;

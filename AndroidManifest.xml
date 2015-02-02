@@ -28,10 +28,10 @@
         <activity
             android:name=".EditExpenseActivity"
             android:label="@string/title_activity_expense"
-            android:parentActivityName=".ListClaimsActivity" >
+            android:parentActivityName=".ViewClaimActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="blainelewis1.cmput301assignment1.ListClaims" />
+                android:value="blainelewis1.cmput301assignment1.activities.ViewClaimActivity" />
         </activity>
         <activity
             android:name=".ViewClaimActivity"
@@ -39,7 +39,7 @@
             android:parentActivityName=".ListClaimsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="blainelewis1.cmput301assignment1.ListClaims" />
+                android:value="blainelewis1.cmput301assignment1.activities.ListClaims" />
         </activity>
         <activity
             android:name=".EditClaimActivity"
@@ -47,7 +47,7 @@
             android:parentActivityName=".ListClaimsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="blainelewis1.cmput301assignment1.ListClaimsActivity" />
+                android:value="blainelewis1.cmput301assignment1.activities.ListClaims" />
         </activity>
     </application>
 

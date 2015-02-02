@@ -3,6 +3,7 @@ package blainelewis1.cmput301assignment1;
 import java.text.DateFormat;
 import java.util.ArrayList;
 
+import models.Expense;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
