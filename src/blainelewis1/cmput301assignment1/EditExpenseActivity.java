@@ -220,16 +220,14 @@ public class EditExpenseActivity extends Activity {
 	}
 
 	private void initViews() {
-		
-
-		
+		//Added a sort function so the spinner looks nice and it is easy to find currencies
 		ArrayList<Currency> currencies = new ArrayList<Currency>(getAvailableCurrencies());
 		
 		Collections.sort(currencies, new Comparator<Currency>() {
 
 			@Override
-			public int compare(Currency arg0, Currency arg1) {
-				return arg0.toString().compareTo(arg1.toString());
+			public int compare(Currency LHS, Currency RHS) {
+				return LHS.toString().compareTo(RHS.toString());
 			}
 			
 		});
