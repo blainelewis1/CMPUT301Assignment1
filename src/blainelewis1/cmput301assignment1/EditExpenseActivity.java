@@ -29,8 +29,6 @@ import java.util.Date;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,8 +39,16 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+
 /*
- * This activity handles creation of new expenses and editting old ones
+ * This activity allows for editing of new and existing expenses
+ * 
+ * On clicking the checkmark the activity is closed
+ * 
+ * If the back button is pressed and it is a new expense we delete the expense
+ * 
+ * Otherwise we simply throw away the changes and close
+ * 
  */
 
 public class EditExpenseActivity extends Activity {
@@ -63,7 +69,14 @@ public class EditExpenseActivity extends Activity {
 
 	private boolean isNew;
 
-
+	/*
+	 * On creation we begin by loading the claim and its expense and determining if it is a new expense
+	 * Then we attach all views by their ids
+	 * Initialize them 
+	 * and apply listeners to them
+	 */
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -85,34 +98,30 @@ public class EditExpenseActivity extends Activity {
 		setListeners();
 		
 	}
-
+	
+	/*
+	 * 
+	 * Apply listeners to the various input fields
+	 * 
+	 * Date fields to open a datepicker dialog 
+	 * 
+	 * onFocusChange to the description for validation and changing the title
+	 * 
+	 */
+	
 	private void setListeners() {
 
+		//Validate and edit the title after changing focus from the description
 		
-		TextWatcher validatingTextWatcher = new TextWatcher(){
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,	int after) {}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				if(s.equals(descriptionEditText)) {
+		descriptionEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(!hasFocus) {
+					validate();
 					setTitle(descriptionEditText.getText());
 				}
-				
-				validate();
 			}
-			
-						
-		};
+		});
 		
-
-		amountEditText.addTextChangedListener(validatingTextWatcher);
-		descriptionEditText.addTextChangedListener(validatingTextWatcher);
-		dateEditText.addTextChangedListener(validatingTextWatcher);
 		
 		Calendar calendar = expense.getCalendar();
 		
@@ -130,7 +139,6 @@ public class EditExpenseActivity extends Activity {
 				DateFormat formatter = DateFormat.getDateInstance();
 				dateEditText.setText(formatter.format(calendar.getTime()));
 				
-				//TODO: this is extremely hacky forces focus where it doesn't need to be, we should focus the next item
 				dateEditText.clearFocus();	
 				
 				validate();
@@ -155,6 +163,11 @@ public class EditExpenseActivity extends Activity {
 		});		
 	}
 	
+	/* 
+	 * In case android throws away our activity for memory, we save the expense so we can bring it back
+	 * This could be improved by saving the changes we are making
+	 */
+	
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 
 		savedInstanceState.putString(ClaimManager.CLAIM_ID_STRING, claim.getId());
@@ -167,22 +180,11 @@ public class EditExpenseActivity extends Activity {
 	    // Always call the superclass so it can save the view hierarchy state
 	    super.onSaveInstanceState(savedInstanceState);
 	}
-	
-	private Calendar extractDate() {
-		
-		DateFormat formatter = DateFormat.getDateInstance();
-		Date date = null;
-		try {
-			date = formatter.parse(dateEditText.getText().toString());
-		} catch (ParseException e) {}
-		
-		Calendar calendar = Calendar.getInstance();
-		
-		calendar.setTime(date);
-		
-		return calendar;
-	}
 
+	/*
+	 * Initialize all the adapters and set the values of all fields to the expenses
+	 */
+	
 	private void initViews() {
 		Currency[] currencies = Currency.getAvailableCurrencies().toArray(new Currency[Currency.getAvailableCurrencies().size()]);
 		
@@ -214,42 +216,44 @@ public class EditExpenseActivity extends Activity {
 		
 	}
 	
-	private void findViewsByIds() {
-		
-		currencySpinner = (Spinner)findViewById(R.id.edit_expense_currency_spinner);
-		dateEditText = (EditText) findViewById(R.id.edit_expense_date);
-		descriptionEditText = (EditText) findViewById(R.id.edit_expense_description);
-		amountEditText = (EditText) findViewById(R.id.edit_expense_amount);
-		categorySpinner = (Spinner) findViewById(R.id.edit_expense_category);	
-	}
+	
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.expense, menu);
-		
-		return true;
-	}
 
+	/*
+	 * Handle action bar clicks
+	 */
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		
+		switch (id) {
+		case R.id.action_settings:
 			return true;
-		} else if (id == R.id.action_delete_expense) {
+		case R.id.action_delete_expense:
 			deleteExpense();
-		} else if(id == R.id.action_finish_edit_expense) {
+			return true;
+		case R.id.action_finish_edit_expense:
 			submitExpense();
-		} else if(id == android.R.id.home && isNew) {
-			claim.deleteExpense(expense);
+			return true;
+		case android.R.id.home:
+			if(isNew) {
+				claim.deleteExpense(expense);
+			}
+	        finish();
+	        return true;
 		}
 		
 		
 		return super.onOptionsItemSelected(item);
 	}
+	
+	/*
+	 * Override if it is a new expense we want to delete the expense
+	 */
 	
 	@Override
 	public void onBackPressed() {
@@ -259,6 +263,10 @@ public class EditExpenseActivity extends Activity {
 		
 		super.onBackPressed();
 	}
+	
+	/*
+	 * Apply all changes made to the model and exit if the changes are valid
+	 */
 	
 	public void submitExpense() {		
 		
@@ -277,15 +285,16 @@ public class EditExpenseActivity extends Activity {
 		
 	}
 	
+	/*
+	 * validates all the fields and toasts if they are not valid
+	 */
+	
 	private boolean validate() {
 		boolean valid = true;
 		
 
 		if(descriptionEditText.getText().toString().isEmpty()){
 			
-			//TODO: this isn't entirely true....
-			//Make this a little bit more applicable
-
 			Toast toast = Toast.makeText(this, "Description cannot be empty", Toast.LENGTH_SHORT);
 			toast.show();
 			
@@ -296,6 +305,10 @@ public class EditExpenseActivity extends Activity {
 		return valid;
 	}
 
+	/*
+	 * Deletes the expense we are editing and exits
+	 */
+	
 	public void deleteExpense() {
 		claim.deleteExpense(expense);
 		
@@ -303,5 +316,46 @@ public class EditExpenseActivity extends Activity {
 		
 		finish();
 	}
+	
+	/*
+	 * Finds all the views by their ids
+	 */
+	
+	private void findViewsByIds() {
+		
+		currencySpinner = (Spinner)findViewById(R.id.edit_expense_currency_spinner);
+		dateEditText = (EditText) findViewById(R.id.edit_expense_date);
+		descriptionEditText = (EditText) findViewById(R.id.edit_expense_description);
+		amountEditText = (EditText) findViewById(R.id.edit_expense_amount);
+		categorySpinner = (Spinner) findViewById(R.id.edit_expense_category);	
+	}
+	
+	
+	//Helper function to extract the date from its edittext
+	
+	private Calendar extractDate() {
+		
+		DateFormat formatter = DateFormat.getDateInstance();
+		Date date = null;
+		try {
+			date = formatter.parse(dateEditText.getText().toString());
+		} catch (ParseException e) {}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(date);
+		
+		return calendar;
+	}
+	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.expense, menu);
+		
+		return true;
+	}
+
 	
 }

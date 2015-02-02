@@ -26,7 +26,6 @@ public class ViewClaimActivity extends Activity {
 
 	private TextView descriptionTextView;
 	private TextView datesTextView;
-	//private ListView claimTotalList;
 	private TextView statusTextView;
 	private ListView expensesList;
 

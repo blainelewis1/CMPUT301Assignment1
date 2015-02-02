@@ -16,7 +16,6 @@ import com.google.gson.reflect.TypeToken;
 
 public class ClaimManager {
 
-	//TODO: let's move serialization to on-demand, eg a claim is changed etc. etc.
 	
 	private static ClaimManager instance = null;
 	private static final String saveFileName = "claims.sav";

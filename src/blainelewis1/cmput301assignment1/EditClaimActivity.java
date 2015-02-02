@@ -26,8 +26,6 @@ import java.util.Date;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,7 +43,9 @@ import android.widget.Toast;
  * 
  * Otherwise you are forwarded to the ViewClaimActivity
  * 
- * But if you are existing an old activity it simply closes and throws away your changes
+ * But if you are existing an old activity it simply closes on back and throws away your changes
+ * 
+ * Or applies edits on clicking the check mark
  * 
  */
 
@@ -59,9 +59,6 @@ public class EditClaimActivity extends Activity {
 
 	private DatePickerDialog startDatePickerDialog;
 	private DatePickerDialog endDatePickerDialog;
-
-	//TODO: should valid really be here?
-	//private boolean valid;
 
 	private LinearLayout layout;
 
@@ -93,8 +90,25 @@ public class EditClaimActivity extends Activity {
 		initViews();
 		setListeners();
 
-		//validate();
 	}
+	
+	/* 
+	 * In case android throws away our activity for memory, we save the claim so we can bring it back
+	 * This could be improved by saving the changes we are making
+	 */
+	
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+
+		savedInstanceState.putString(ClaimManager.CLAIM_ID_STRING, claim.getId());
+		
+		if(isNew) {
+			savedInstanceState.putBoolean(ClaimManager.IS_NEW, isNew);
+		}
+		
+	    // Always call the superclass so it can save the view hierarchy state
+	    super.onSaveInstanceState(savedInstanceState);
+	}
+	
 
 	/*
 	 * When the back button is pressed we need to determine if it was a new claim, 
@@ -117,43 +131,22 @@ public class EditClaimActivity extends Activity {
 	 * 
 	 * Date fields to open a datepicker dialog 
 	 * 
-	 * And a textwatcher to the textviews to allow for on the fly validation
+	 * onFocusChange to the description for validation and changing the title
 	 * 
 	 */
 	
 
-	private void setListeners() {
-
-		//TODO: this might be a little bit too much
+	private void setListeners() {		
+		//For validation
 		
-		TextWatcher validatingTextWatcher = new TextWatcher() {
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				if(s.equals(descriptionEditText)) {
+		descriptionEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(!hasFocus) {
+					validate();
 					setTitle(descriptionEditText.getText());
 				}
-				
-				validate();
 			}
-
-		};
-		
-		//For validation
-
-		startDateEditText.addTextChangedListener(validatingTextWatcher);
-		descriptionEditText.addTextChangedListener(validatingTextWatcher);
-		endDateEditText.addTextChangedListener(validatingTextWatcher);
+		});
 
 		
 		//When focus goes to the date fields, open a datepickerdialog
@@ -171,8 +164,10 @@ public class EditClaimActivity extends Activity {
 							calendar.get(Calendar.MONTH),
 							calendar.get(Calendar.DAY_OF_MONTH));
 					startDatePickerDialog.show();
+				} else {
+					validate();
 				}
-
+				
 			}
 
 		});
@@ -188,7 +183,10 @@ public class EditClaimActivity extends Activity {
 							calendar.get(Calendar.MONTH),
 							calendar.get(Calendar.DAY_OF_MONTH));
 					endDatePickerDialog.show();
+				} else {
+					validate();
 				}
+				
 
 			}
 
@@ -237,6 +235,10 @@ public class EditClaimActivity extends Activity {
 				endCalendar.get(Calendar.DAY_OF_MONTH));
 
 	}
+	
+	/* 
+	 * Handles clicking of the action bar buttons
+	 */
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -244,13 +246,21 @@ public class EditClaimActivity extends Activity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		} else if (id == R.id.action_finish_edit_claim) {
-			submitEdits();
-		} else if (id == android.R.id.home && isNew) {
-			ClaimManager.getInstance().deleteClaim(claim);
+		switch (id) {
+			case R.id.action_settings:
+				return true;
+			case R.id.action_finish_edit_claim:
+				submitEdits();
+				return true;
+			case android.R.id.home:
+				if(isNew) {
+					ClaimManager.getInstance().deleteClaim(claim);
+				}
+		        finish();
+		        return true;
+		        
 		}
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -289,7 +299,6 @@ public class EditClaimActivity extends Activity {
 		boolean valid = true;
 
 		if (descriptionEditText.getText().toString().isEmpty()) {
-			//descriptionEditText.setError("Description cannot be empty!");
 
 			Toast toast = Toast.makeText(this, "Description cannot be empty", Toast.LENGTH_SHORT);
 			toast.show();
