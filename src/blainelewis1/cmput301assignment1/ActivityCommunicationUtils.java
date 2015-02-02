@@ -1,3 +1,21 @@
+/*
+
+Copyright 2015 Blaine Lewis
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/
+
 package blainelewis1.cmput301assignment1;
 
 import android.content.Context;
@@ -9,6 +27,9 @@ import android.os.Bundle;
  * This class contains a series of utility functions that handle inter activity 
  * communication as well as decoupling the activities from each other, allowing 
  * easy plug and play of different views
+ * 
+ * I decided to extract this class even though it is a loner because it's methods don't really fit anywhere else, 
+ * unless I had an "ApplicationHandler" of some sort
  */
 
 public abstract class ActivityCommunicationUtils {

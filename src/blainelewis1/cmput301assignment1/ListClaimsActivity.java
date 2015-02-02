@@ -39,6 +39,8 @@ import android.widget.ListView;
  * This activity is the entry point to the entire application
  * It handles initialization tasks such as deserialzation of the date 
  * 
+ * I decided to handle serialization here as a form of RAII because we only have one entry point to the application
+ * 
  * It displays a list of claims which can be accessed by tapping on them
  * Finally it provides an action bar button to allow creating a new claim
  * 
@@ -100,8 +102,8 @@ public class ListClaimsActivity extends Activity {
 		claimsListAdapter.sort(new Comparator<Claim>() {
 			@Override
 			public int compare(Claim claim1, Claim claim2) {
-				return claim1.getStartCalendar().compareTo(
-						claim2.getStartCalendar());
+				return claim1.getStart().compareTo(
+						claim2.getStart());
 			}
 		});
 		

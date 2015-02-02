@@ -1,3 +1,22 @@
+/*
+
+Copyright 2015 Blaine Lewis
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/
+
+
 package blainelewis1.cmput301assignment1;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -18,6 +37,8 @@ import java.util.UUID;
  * 
  * 
  * Every expense has a unique id for easy transfer between activities
+ * 
+ * I use BigDecimal to avoid floating point errors
  */
 
 
@@ -85,7 +106,7 @@ public class Expense {
 	 */
 	
 	public Expense(Claim claim) {
-		this(claim.getStartCalendar(), "meal", "", new BigDecimal("0.00"), Currency.getInstance(Locale.getDefault()));
+		this(claim.getStart(), "meal", "", new BigDecimal("0.00"), Currency.getInstance(Locale.getDefault()));
 	}
 
 	public Calendar getCalendar() {

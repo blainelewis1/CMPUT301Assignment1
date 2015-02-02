@@ -47,6 +47,9 @@ import android.widget.Toast;
  * 
  * Or applies edits on clicking the check mark
  * 
+ * There weren't many odd design decisions except doubling this activities use for editing
+ * new claims, which complicates the implementation slightly, but allows for more code duplication
+ * 
  */
 
 public class EditClaimActivity extends Activity {
@@ -87,6 +90,8 @@ public class EditClaimActivity extends Activity {
 
 		if(isNew) {
 			setTitle("New Claim");
+		} else {
+			setTitle(claim.getDescription());
 		}
 		
 		findViewsByIds();
@@ -196,7 +201,7 @@ public class EditClaimActivity extends Activity {
 		});
 		
 		
-		Calendar startCalendar = claim.getStartCalendar();
+		Calendar startCalendar = claim.getStart();
 
 		//Apply chosen date after the dialog closes
 		
@@ -218,7 +223,7 @@ public class EditClaimActivity extends Activity {
 				startCalendar.get(Calendar.MONTH),
 				startCalendar.get(Calendar.DAY_OF_MONTH));
 
-		Calendar endCalendar = claim.getEndCalendar();
+		Calendar endCalendar = claim.getEnd();
 
 		endDatePickerDialog = new DatePickerDialog(this,
 				new DatePickerDialog.OnDateSetListener() {
@@ -331,9 +336,9 @@ public class EditClaimActivity extends Activity {
 	private void initViews() {
 		DateFormat formatter = DateFormat.getDateInstance();
 
-		startDateEditText.setText(formatter.format(claim.getStartCalendar()
+		startDateEditText.setText(formatter.format(claim.getStart()
 				.getTime()));
-		endDateEditText.setText(formatter.format(claim.getEndCalendar()
+		endDateEditText.setText(formatter.format(claim.getEnd()
 				.getTime()));
 
 		descriptionEditText.setText(claim.getDescription());
@@ -386,7 +391,7 @@ public class EditClaimActivity extends Activity {
 	//Helper function for formatting dates
 	
 	private String formatDate(int year, int monthOfYear, int dayOfMonth) {
-		Calendar calendar = claim.getStartCalendar();
+		Calendar calendar = claim.getStart();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, monthOfYear);
 		calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);

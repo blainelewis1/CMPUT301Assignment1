@@ -1,3 +1,21 @@
+/*
+
+Copyright 2015 Blaine Lewis
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/
+
 package blainelewis1.cmput301assignment1;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -14,6 +32,10 @@ import java.util.UUID;
  * 
  * A claim is not modifiable if it's status is SUBMITTED or APPROVED and will throw an exception if you attemot to change it
  * 
+ * The biggest design decision here was to not allow mutation of the start and end calendar separately
+ * This allows easier validation, and it is essentially a range, not a start and end,
+ * so it makes sense to set both at the same time.
+ * 
  */
 
 public class Claim {
@@ -27,8 +49,8 @@ public class Claim {
 	
 	enum Status {IN_PROGRESS, SUBMITTED, RETURNED, APPROVED};
 		
-	private Calendar startCalendar;
-	private Calendar endCalendar;
+	private Calendar start;
+	private Calendar end;
 	private String description;
 	private Status status;
 	private String id;
@@ -81,8 +103,12 @@ public class Claim {
 		expenses.remove(expense);
 	}
 
-	public Calendar getStartCalendar() {
-		return startCalendar;
+	public Calendar getStart() {
+		return start;
+	}
+	
+	public Calendar getEnd() {
+		return end;
 	}
 
 	/*
@@ -106,13 +132,20 @@ public class Claim {
 			throw new IllegalArgumentException("Start calendar must be before end calendar.");
 		}
 		
-		this.startCalendar = startCalendar;
-		this.endCalendar = endCalendar;
+		this.start = startCalendar;
+		this.end = endCalendar;
+	}
+	
+
+	/*
+	 * Tests if the date range is valid
+	 */
+	
+	public boolean isDateRangeValid(Calendar startCalendar,
+			Calendar endCalendar) {
+		return startCalendar.compareTo(endCalendar) <= 0 && endCalendar.compareTo(startCalendar) >= 0;
 	}
 
-	public Calendar getEndCalendar() {
-		return endCalendar;
-	}
 
 	public String getDescription() {
 		return description;
@@ -215,7 +248,7 @@ public class Claim {
 	public String getFormattedDateRange() {
 		DateFormat formatter = DateFormat.getDateInstance();
 
-		return formatter.format(startCalendar.getTime()) + " - " + formatter.format(endCalendar.getTime());
+		return formatter.format(start.getTime()) + " - " + formatter.format(end.getTime());
 	}
 	
 	/*
@@ -237,13 +270,5 @@ public class Claim {
 		return sb.toString();
 	}
 
-	/*
-	 * Tests if the date range is valid
-	 */
-	
-	public boolean isDateRangeValid(Calendar startCalendar,
-			Calendar endCalendar) {
-		return startCalendar.compareTo(endCalendar) <= 0 && endCalendar.compareTo(startCalendar) >= 0;
-	}
 
 }

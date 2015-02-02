@@ -49,6 +49,9 @@ import android.widget.Toast;
  * 
  * Otherwise we simply throw away the changes and close
  * 
+ * As in EditClaimActivity by using this activity for new and editting expenses
+ * I complicated implementation at the benefit of reducing duplication
+ * 
  */
 
 public class EditExpenseActivity extends Activity {
@@ -94,6 +97,8 @@ public class EditExpenseActivity extends Activity {
 		
 		if(isNew) {
 			setTitle("New Expense");
+		} else {
+			setTitle(expense.getDescription());
 		}
 		
 		findViewsByIds();
