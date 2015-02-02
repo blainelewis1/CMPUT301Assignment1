@@ -22,6 +22,9 @@ I used this code snippet to create nice looking representations of currencies.
 https://sites.google.com/site/gson/gson-user-guide 02-02-2015 Blaine Lewis
 Used a reflection snippet to make serialization work. Same snippet as was used in class
 
+http://stackoverflow.com/a/3537085 02-02-2015 Blaine Lewis
+
+Differing java versions forced me to add a new function to get all currencies
 
 #License:
 
