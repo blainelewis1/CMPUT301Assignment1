@@ -4,6 +4,10 @@ This is a very basic local claim management system built for CMPUT 301 (software
 
 The app is compiled as bin/CMPUT301Assignment1.apk
 
+The demo video is 
+https://github.com/blainelewis1/CMPUT301Assignment1/blob/master/doc/demo.mkv?raw=true
+In the doc directory
+
 I made use of the GSON library for serialization, it can be found here under the Apache 2.0 license: https://code.google.com/p/google-gson/
 
 I also used some of the icons provided here which are free for use: https://developer.android.com/design/downloads/index.html#action-bar-icon-pack
@@ -17,14 +21,16 @@ Ideally I would have separate packages for different things eg. models, activiti
 #Citations
 
 http://stackoverflow.com/a/2057163/1036813 02-02-2015 Blaine Lewis
+
 I used this code snippet to create nice looking representations of currencies.
 
 https://sites.google.com/site/gson/gson-user-guide 02-02-2015 Blaine Lewis
+
 Used a reflection snippet to make serialization work. Same snippet as was used in class
 
 http://stackoverflow.com/a/3537085 02-02-2015 Blaine Lewis
 
-Differing java versions forced me to add a new function to get all currencies
+Differing java versions forced me to add a new function to get all currencies from their locales
 
 #License:
 
