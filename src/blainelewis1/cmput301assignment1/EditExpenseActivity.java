@@ -22,9 +22,15 @@ package blainelewis1.cmput301assignment1;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -195,10 +201,38 @@ public class EditExpenseActivity extends Activity {
 	/*
 	 * Initialize all the adapters and set the values of all fields to the expenses
 	 */
+	//adapted from
+	//http://stackoverflow.com/a/3537085 02-02-2015 Blaine Lewis
 	
+	private Set<Currency> getAvailableCurrencies() {
+		Set<Currency> currencies = new HashSet<Currency>();
+
+        for(Locale locale : Locale.getAvailableLocales()) {
+            try {
+            	currencies.add(Currency.getInstance(locale));
+            } catch(Exception exc)
+            {
+                // Locale not found, do nothing
+            }
+        }
+
+        return currencies;
+	}
+
 	private void initViews() {
-		Currency[] currencies = Currency.getAvailableCurrencies().toArray(new Currency[Currency.getAvailableCurrencies().size()]);
 		
+
+		
+		ArrayList<Currency> currencies = new ArrayList<Currency>(getAvailableCurrencies());
+		
+		Collections.sort(currencies, new Comparator<Currency>() {
+
+			@Override
+			public int compare(Currency arg0, Currency arg1) {
+				return arg0.toString().compareTo(arg1.toString());
+			}
+			
+		});
 		
 		currencyAdapter = new ArrayAdapter<Currency>(this, 
 												android.R.layout.simple_spinner_item, 
