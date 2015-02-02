@@ -213,7 +213,7 @@ public class Expense {
 		//TODO: make this prettier
 		
 		sb.append("<div class=\"expense\">")
-		.append("<h2 class=\"description\">").append(description).append("</h2>")
+		.append("<h4 class=\"description\">").append(description).append("</h2>")
 		.append("<p class=\"date\">").append(formatter.format(calendar.getTime())).append("</p>")
 		.append("<p class=\"category\">").append(category).append("</p>")
 		.append("<p class=\"amount\">").append(getReadableAmount()).append("</p>")

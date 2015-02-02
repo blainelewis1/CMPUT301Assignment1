@@ -263,7 +263,7 @@ public class Claim {
 		.append("<h3>").append(getStatusString()).append("</h3>");
 		
 		for(Expense expense : expenses) {
-			sb.append("<hr />").
+			sb.append("<br /><p>---------------------------------------------------</p><br />").
 			append(expense.getHTMLRepresentation());
 		}
 				
