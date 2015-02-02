@@ -188,7 +188,7 @@ public class Expense {
 	
 	public static String getReadableCurrency(BigDecimal amount, Currency currency) {
 
-		//http://stackoverflow.com/a/2057163/1036813 2015-02-01 Blaine Lewis
+		//http://stackoverflow.com/a/2057163/1036813 02-02-2015 Blaine Lewis
 		
 		//I had to use this solution because currency formats default to using parantheses for negative values
 		// I Want $-20 I got ($20) without using setNegative****
@@ -209,8 +209,6 @@ public class Expense {
 		StringBuilder sb = new StringBuilder();
 		
 		DateFormat formatter = DateFormat.getDateInstance();
-
-		//TODO: make this prettier
 		
 		sb.append("<div class=\"expense\">")
 		.append("<h4 class=\"description\">").append(description).append("</h2>")

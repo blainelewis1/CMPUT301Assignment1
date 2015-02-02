@@ -162,7 +162,7 @@ public class ClaimManager {
 			InputStreamReader reader = new InputStreamReader(
 					context.openFileInput(saveFileName));
 
-			//https://sites.google.com/site/gson/gson-user-guide 02-02-2015
+			//https://sites.google.com/site/gson/gson-user-guide 02-02-2015 Blaine Lewis
 
 			Type arrayListType = new TypeToken<ArrayList<Claim>>() {
 			}.getType();
