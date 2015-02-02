@@ -49,8 +49,11 @@ import android.widget.Toast;
  * 
  * Otherwise we simply throw away the changes and close
  * 
- * As in EditClaimActivity by using this activity for new and editting expenses
+ * As in EditClaimActivity by using this activity for new and editing expenses
  * I complicated implementation at the benefit of reducing duplication
+ * 
+ * As well, there is a dependency on the claim that owns this expense that is not required.
+ * However by including it we reduce the time required to find an expense.
  * 
  */
 
