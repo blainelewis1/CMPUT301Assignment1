@@ -22,12 +22,12 @@
         android:text="@string/progress"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <ListView
-        android:id="@+id/claim_list_expense_totals"
+    <TextView
+        android:id="@+id/claim_list_item_expense_totals"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none" >
-
-    </ListView>
+        android:gravity="end"
+        android:text="@string/currencies"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>

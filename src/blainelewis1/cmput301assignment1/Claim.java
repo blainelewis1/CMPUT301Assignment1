@@ -100,7 +100,7 @@ public class Claim {
 		if(!this.isEditable()){
 			throw new IllegalStateException("Claim is not in an editable state.");
 		}
-		this.description = description;
+		this.description = description.trim();
 	}
 	
 	public boolean isEditable() {
@@ -145,9 +145,9 @@ public class Claim {
 			BigDecimal current = totals.get(expense.getCurrency());
 			
 			if(current == null) {
-				totals.put(expense.getCurrency().getSymbol(), expense.getAmount());
+				totals.put(expense.getCurrency().getCurrencyCode(), expense.getAmount());
 			} else { 
-				totals.put(expense.getCurrency().getSymbol(), expense.getAmount().add(current));
+				totals.put(expense.getCurrency().getCurrencyCode(), expense.getAmount().add(current));
 			}
 
 		}

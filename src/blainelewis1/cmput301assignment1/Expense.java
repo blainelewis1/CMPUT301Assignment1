@@ -1,6 +1,7 @@
 package blainelewis1.cmput301assignment1;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -102,7 +103,7 @@ public class Expense {
 			throw new IllegalArgumentException("Description cannot be empty!");
 		}
 		
-		this.description = description;
+		this.description = description.trim();
 	}
 
 	public BigDecimal getAmount() {
@@ -134,10 +135,17 @@ public class Expense {
 		
 	}
 	public static String getReadableCurrency(BigDecimal amount, Currency currency) {
-		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+		//NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
+		//formatter.setCurrency(currency);
+		//formatter.setMaximumFractionDigits(currency.getDefaultFractionDigits());
+		//formatter.setMinimumFractionDigits(currency.getDefaultFractionDigits());
+		
+		DecimalFormat formatter = (DecimalFormat)NumberFormat.getCurrencyInstance();
 		formatter.setCurrency(currency);
-		formatter.setMaximumFractionDigits(currency.getDefaultFractionDigits());
-		formatter.setMinimumFractionDigits(currency.getDefaultFractionDigits());
+		String symbol = formatter.getCurrency().getSymbol();
+		formatter.setNegativePrefix(symbol+"-"); // or "-"+symbol if that's what you need
+		formatter.setNegativeSuffix("");
+		
 		return formatter.format(amount);
 	}
 	
