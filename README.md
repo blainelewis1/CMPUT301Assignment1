@@ -2,14 +2,26 @@
 
 This is a very basic local claim management system built for CMPUT 301 (software engineering)
 
-The app apk is CMPUT301Assignment1.apk
+The app is compiled as bin/CMPUT301Assignment1.apk
 
-I made use of the GSON library for serialization, it can be found here: https://code.google.com/p/google-gson/
+I made use of the GSON library for serialization, it can be found here under the Apache 2.0 license: https://code.google.com/p/google-gson/
 
-I also used the icons provided here: https://developer.android.com/design/downloads/index.html#action-bar-icon-pack
+I also used some of the icons provided here which are free for use: https://developer.android.com/design/downloads/index.html#action-bar-icon-pack
+
+My app is entirely localized, if you view with a french locale then your numbers will be displayed with , decimals etc etc. However, it is not translated. 
+
+My UML diagram is minimal because UML is intended as a quick overview of class relationships. If you need to find inner workings of classes then you should be reading documentation not looking at models. The notes complicate the diagram, but the assignment spec indicated I should have them.
+
+#Citations
+
+http://stackoverflow.com/a/2057163/1036813 02-02-2015 Blaine Lewis
+I used this code snippet to create nice looking representations of currencies.
+
+https://sites.google.com/site/gson/gson-user-guide 02-02-2015 Blaine Lewis
+Used a reflection snippet to make serialization work. Same snippet as was used in class
 
 
-License:
+#License:
 
 Copyright 2015 Blaine Lewis
 
