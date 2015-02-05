@@ -201,7 +201,7 @@ public class Claim {
 		HashMap<String, BigDecimal> totals = new HashMap<String, BigDecimal>();
 		
 		for(Expense expense : expenses) {
-			BigDecimal current = totals.get(expense.getCurrency());
+			BigDecimal current = totals.get(expense.getCurrency().getCurrencyCode());
 			
 			if(current == null) {
 				totals.put(expense.getCurrency().getCurrencyCode(), expense.getAmount());
